@@ -3,7 +3,7 @@ module Main exposing (..)
 import Browser
 import Choice exposing (Choice)
 import Comparison exposing (Comparison)
-import Html exposing (Html, br, button, div, h1, text)
+import Html exposing (Html, br, button, details, div, h1, li, ol, summary, text)
 import Html.Events exposing (onClick)
 import Random
 import Random.List
@@ -120,24 +120,39 @@ view model =
                             , button [ onClick (Pick Choice.Right) ]
                                 [ text <| Value.toString cmp.right ]
                             ]
-                , div []
-                    [ text "Results: "
-                    , List.map Value.toString state.results |> String.join ", " |> text
+                , details
+                    []
+                    [ summary [] [ text "debug" ]
+                    , div []
+                        [ text "Results: "
+                        , List.map Value.toString state.results |> String.join ", " |> text
+                        ]
+                    , div []
+                        [ text "To compare:"
+                        , br [] []
+                        , List.map Comparison.toString state.toCompare |> String.join ", " |> text
+                        ]
+                    , Tournament.view state.tournament
                     ]
-                , div []
-                    [ text "To compare:"
-                    , br [] []
-                    , List.map Comparison.toString state.toCompare |> String.join ", " |> text
-                    ]
-                , Tournament.view state.tournament
                 ]
 
         Sorted results ->
             div []
                 [ h1 [] [ text "sorted" ]
-                , List.map Value.toString results.ranked |> String.join ", " |> text
+                , ol []
+                    (List.map
+                        (Value.toString
+                            >> text
+                            >> List.singleton
+                            >> li []
+                        )
+                        results.ranked
+                    )
                 , if results.tournament /= Tournament.Leaf Nothing then
-                    Tournament.view results.tournament
+                    details []
+                        [ summary [] [ text "debug" ]
+                        , Tournament.view results.tournament
+                        ]
 
                   else
                     div [] []
