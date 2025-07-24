@@ -52,10 +52,20 @@ makeTournament values =
                 , value = Nothing
                 }
 
-        a :: b :: rest ->
+        _ ->
+            let
+                half =
+                    List.length values // 2
+
+                leftValues =
+                    List.take half values
+
+                rightValues =
+                    List.drop half values
+            in
             Node
-                { left = makeTournament [ a, b ]
-                , right = makeTournament rest
+                { left = makeTournament leftValues
+                , right = makeTournament rightValues
                 , value = Nothing
                 }
 
