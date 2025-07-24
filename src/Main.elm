@@ -20,50 +20,47 @@ main =
         }
 
 
-stepTournament : Model -> Model
-stepTournament model =
-    case model of
-        Sorting sortingState ->
-            let
-                ( newResults, newTournament ) =
-                    Tournament.prune sortingState.results sortingState.tournament
-            in
-            case Tournament.findMatches newTournament of
-                [] ->
-                    Sorted (List.reverse newResults) newTournament
-
-                toCompare ->
-                    Sorting
-                        { results = newResults
-                        , toCompare = toCompare
-                        , tournament = newTournament
-                        }
-
-        _ ->
-            model
-
-
-type alias SortingState =
-    { results : List Value
-    , toCompare : List Comparison
-    , tournament : Tournament
-    }
-
-
 type Model
     = Init
-    | Sorting SortingState
-    | Sorted (List Value) Tournament
-
-
-init : () -> ( Model, Cmd Msg )
-init _ =
-    ( Init, Random.generate NewList (Random.List.shuffle fruit) )
+    | Sorting
+        { results : List Value
+        , toCompare : List Comparison
+        , tournament : Tournament
+        }
+    | Sorted { ranked : List Value, tournament : Tournament }
 
 
 type Msg
     = NewList (List Value)
     | Pick Choice
+
+
+init : () -> ( Model, Cmd Msg )
+init _ =
+    let
+        values =
+            -- [ "apple", "banana", "orange", "grape", "pear", "peach", "pineapple", "strawberry" ]
+            [ "🍎 apple"
+            , "🍐 pear"
+            , "🍊 orange "
+            , "🍋 lemon"
+            , "🍌 banana"
+            , "🍉 watermelon"
+            , "🍇 grape"
+            , "🍓 strawberry"
+            , "🫐 blueberry"
+            , "🍒 cherry"
+            , "🍑 peach"
+            , "🍍 pineapple"
+            , "🥝 kiwi"
+            ]
+    in
+    ( Init, Random.generate NewList (Random.List.shuffle values) )
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -88,34 +85,17 @@ update msg model =
                             ( model, Cmd.none )
 
                         cmp :: cmps ->
-                            ( Sorting
-                                { state
-                                    | tournament = Tournament.promote cmp choice state.tournament
-                                    , toCompare = cmps
-                                }
-                                |> stepTournament
+                            ( stepTournament <|
+                                Sorting
+                                    { state
+                                        | tournament = Tournament.promote cmp choice state.tournament
+                                        , toCompare = cmps
+                                    }
                             , Cmd.none
                             )
 
                 _ ->
                     ( model, Cmd.none )
-
-
-fruit =
-    [ "apple"
-    , "banana"
-    , "orange"
-    , "grape"
-    , "pear"
-    , "peach"
-    , "pineapple"
-    , "strawberry"
-    ]
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
 
 
 view : Model -> Html Msg
@@ -152,13 +132,36 @@ view model =
                 , Tournament.view state.tournament
                 ]
 
-        Sorted results tournament ->
+        Sorted results ->
             div []
                 [ h1 [] [ text "sorted" ]
-                , List.map Value.toString results |> String.join ", " |> text
-                , if tournament /= Tournament.Leaf Nothing then
-                    Tournament.view tournament
+                , List.map Value.toString results.ranked |> String.join ", " |> text
+                , if results.tournament /= Tournament.Leaf Nothing then
+                    Tournament.view results.tournament
 
                   else
                     div [] []
                 ]
+
+
+stepTournament : Model -> Model
+stepTournament model =
+    case model of
+        Sorting sortingState ->
+            let
+                ( newResults, newTournament ) =
+                    Tournament.prune sortingState.results sortingState.tournament
+            in
+            case Tournament.findMatches newTournament of
+                [] ->
+                    Sorted { ranked = List.reverse newResults, tournament = newTournament }
+
+                toCompare ->
+                    Sorting
+                        { results = newResults
+                        , toCompare = toCompare
+                        , tournament = newTournament
+                        }
+
+        _ ->
+            model
