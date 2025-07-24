@@ -12,7 +12,12 @@ import Value exposing (Value)
 
 
 main =
-    Browser.sandbox { init = init, update = update, view = view }
+    Browser.element
+        { init = init
+        , update = update
+        , subscriptions = subscriptions
+        , view = view
+        }
 
 
 stepTournament : Model -> Model
@@ -46,58 +51,81 @@ type alias SortingState =
 
 
 type Model
-    = Sorting SortingState
+    = Init
+    | Sorting SortingState
     | Sorted (List Value) Tournament
 
 
-init : Model
-init =
-    let
-        -- TODO: shuffle
-        values =
-            [ "apple", "banana", "orange", "grape", "pear", "peach", "pineapple", "strawberry" ]
-
-        tournament =
-            Tournament.makeTournament values
-
-        initialSorting =
-            Sorting { results = [], toCompare = [], tournament = tournament }
-    in
-    stepTournament initialSorting
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( Init, Random.generate NewList (Random.List.shuffle fruit) )
 
 
-type
-    Msg
-    -- | NewList (List Value)
-    = Pick Choice
+type Msg
+    = NewList (List Value)
+    | Pick Choice
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        NewList values ->
+            ( stepTournament <|
+                Sorting
+                    { results = []
+                    , toCompare = []
+                    , tournament = Tournament.makeTournament values
+                    }
+            , Cmd.none
+            )
+
         Pick choice ->
             case model of
                 Sorting state ->
                     case state.toCompare of
                         [] ->
                             --TODO: maybe error here?
-                            model
+                            ( model, Cmd.none )
 
                         cmp :: cmps ->
-                            Sorting
+                            ( Sorting
                                 { state
                                     | tournament = Tournament.promote cmp choice state.tournament
                                     , toCompare = cmps
                                 }
                                 |> stepTournament
+                            , Cmd.none
+                            )
 
                 _ ->
-                    model
+                    ( model, Cmd.none )
+
+
+fruit =
+    [ "apple"
+    , "banana"
+    , "orange"
+    , "grape"
+    , "pear"
+    , "peach"
+    , "pineapple"
+    , "strawberry"
+    ]
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
 
 
 view : Model -> Html Msg
 view model =
     case model of
+        Init ->
+            div []
+                [ text "building list..."
+                ]
+
         Sorting state ->
             div []
                 [ h1 [] [ text "sorting" ]
