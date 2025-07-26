@@ -37,25 +37,10 @@ type Msg
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    let
-        values =
-            -- [ "apple", "banana", "orange", "grape", "pear", "peach", "pineapple", "strawberry" ]
-            [ "🍎 apple"
-            , "🍐 pear"
-            , "🍊 orange "
-            , "🍋 lemon"
-            , "🍌 banana"
-            , "🍉 watermelon"
-            , "🍇 grape"
-            , "🍓 strawberry"
-            , "🫐 blueberry"
-            , "🍒 cherry"
-            , "🍑 peach"
-            , "🍍 pineapple"
-            , "🥝 kiwi"
-            ]
-    in
-    ( Init, Random.generate NewList (Random.List.shuffle values) )
+    ( Init
+    , Random.generate NewList
+        (Random.List.shuffle Value.demoValues)
+    )
 
 
 subscriptions : Model -> Sub Msg
@@ -116,9 +101,9 @@ view model =
                     cmp :: _ ->
                         div []
                             [ button [ onClick (Pick Choice.Left) ]
-                                [ text <| Value.toString cmp.left ]
+                                [ Value.view cmp.left ]
                             , button [ onClick (Pick Choice.Right) ]
-                                [ text <| Value.toString cmp.right ]
+                                [ Value.view cmp.right ]
                             ]
                 , details
                     []
@@ -127,11 +112,7 @@ view model =
                         [ text "Results: "
                         , ol []
                             (List.map
-                                (Value.toString
-                                    >> text
-                                    >> List.singleton
-                                    >> li []
-                                )
+                                (\value -> li [] [ Value.view value ])
                                 (List.reverse state.results)
                             )
                         ]
@@ -149,11 +130,7 @@ view model =
                 [ h1 [] [ text "sorted" ]
                 , ol []
                     (List.map
-                        (Value.toString
-                            >> text
-                            >> List.singleton
-                            >> li []
-                        )
+                        (\value -> li [] [ Value.view value ])
                         results.ranked
                     )
                 , if results.tournament /= Tournament.Leaf Nothing then
