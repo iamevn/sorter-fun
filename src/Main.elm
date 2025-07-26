@@ -1,4 +1,4 @@
-module Main exposing (..)
+module Main exposing (main)
 
 import Browser
 import Choice exposing (Choice)
@@ -125,7 +125,15 @@ view model =
                     [ summary [] [ text "debug" ]
                     , div []
                         [ text "Results: "
-                        , List.map Value.toString state.results |> String.join ", " |> text
+                        , ol []
+                            (List.map
+                                (Value.toString
+                                    >> text
+                                    >> List.singleton
+                                    >> li []
+                                )
+                                (List.reverse state.results)
+                            )
                         ]
                     , div []
                         [ text "To compare:"
