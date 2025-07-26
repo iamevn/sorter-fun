@@ -33,6 +33,7 @@ type Model
 type Msg
     = NewList (List Value)
     | Pick Choice
+    | Reset
 
 
 init : () -> ( Model, Cmd Msg )
@@ -51,6 +52,12 @@ subscriptions model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        Reset ->
+            ( Init
+            , Random.generate NewList
+                (Random.List.shuffle Value.demoValues)
+            )
+
         NewList values ->
             ( stepTournament <|
                 Sorting
@@ -83,6 +90,11 @@ update msg model =
                     ( model, Cmd.none )
 
 
+resetButton : Html Msg
+resetButton =
+    button [ onClick Reset ] [ text "Start Over" ]
+
+
 view : Model -> Html Msg
 view model =
     case model of
@@ -105,6 +117,8 @@ view model =
                             , button [ onClick (Pick Choice.Right) ]
                                 [ Value.view cmp.right ]
                             ]
+                , br [] []
+                , resetButton
                 , details
                     []
                     [ summary [] [ text "debug" ]
@@ -141,6 +155,7 @@ view model =
 
                   else
                     div [] []
+                , resetButton
                 ]
 
 
