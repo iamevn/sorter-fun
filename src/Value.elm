@@ -9,12 +9,17 @@ type alias Value =
 
 toString : Value -> String
 toString value =
-    value
+    case String.words value of
+        first :: _ ->
+            first
+
+        _ ->
+            value
 
 
 view : Value -> Html any
 view value =
-    Html.text <| toString value
+    Html.text value
 
 
 demoValues : List Value
