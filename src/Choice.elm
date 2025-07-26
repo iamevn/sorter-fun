@@ -1,4 +1,4 @@
-module Choice exposing (..)
+module Choice exposing (Choice(..))
 
 
 type Choice

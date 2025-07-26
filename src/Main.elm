@@ -6,11 +6,12 @@ import Comparison exposing (Comparison)
 import Html exposing (Html, br, button, details, div, h1, li, ol, summary, text)
 import Html.Events exposing (onClick)
 import Random
-import Random.List
+import Random.List exposing (shuffle)
 import Tournament exposing (Tournament)
 import Value exposing (Value)
 
 
+main : Program () Model Msg
 main =
     Browser.element
         { init = init
@@ -39,13 +40,12 @@ type Msg
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( Init
-    , Random.generate NewList
-        (Random.List.shuffle Value.demoValues)
+    , Random.generate NewList <| shuffle Value.demoValues
     )
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.none
 
 
@@ -53,7 +53,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Reset ->
-            ( Init
+            ( model
             , Random.generate NewList
                 (Random.List.shuffle Value.demoValues)
             )
@@ -73,7 +73,7 @@ update msg model =
                 Sorting state ->
                     case state.toCompare of
                         [] ->
-                            --TODO: maybe error here?
+                            --maybe should error here?
                             ( model, Cmd.none )
 
                         cmp :: cmps ->

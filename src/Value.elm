@@ -1,4 +1,4 @@
-module Value exposing (..)
+module Value exposing (Value, demoValues, toString, view)
 
 import Html exposing (Html)
 

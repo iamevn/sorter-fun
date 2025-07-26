@@ -1,4 +1,11 @@
-module Tournament exposing (..)
+module Tournament exposing
+    ( Tournament(..)
+    , findMatches
+    , makeTournament
+    , promote
+    , prune
+    , view
+    )
 
 import BinaryTreeDiagram exposing (BinaryTree)
 import Choice exposing (Choice)
@@ -54,12 +61,15 @@ makeTournament values =
 
         _ ->
             let
+                half : Int
                 half =
                     List.length values // 2
 
+                leftValues : List Value
                 leftValues =
                     List.take half values
 
+                rightValues : List Value
                 rightValues =
                     List.drop half values
             in
@@ -79,6 +89,7 @@ prune results tournament =
         newResult =
             getValue tournament
 
+        mergedResults : List Value
         mergedResults =
             case newResult of
                 Just value ->
@@ -88,6 +99,7 @@ prune results tournament =
                     results
 
         -- if pulled root, walk back down tree removing pulled value from nodes it is on
+        rootedTournament : Tournament
         rootedTournament =
             case newResult of
                 Nothing ->
@@ -95,6 +107,7 @@ prune results tournament =
 
                 Just remove ->
                     let
+                        loop : Tournament -> Tournament
                         loop tree =
                             case tree of
                                 Leaf Nothing ->
@@ -119,8 +132,10 @@ prune results tournament =
         -- remove empty leaves
         -- childless nodes: make leaf if has value, remove if not
         -- single-child nodes: replace with child
+        trimmedTournament : Tournament
         trimmedTournament =
             let
+                loop : Tournament -> Tournament
                 loop tree =
                     case tree of
                         Leaf _ ->
@@ -134,19 +149,16 @@ prune results tournament =
                                 ( _, Leaf Nothing ) ->
                                     node.left
 
-                                ( _, _ ) ->
+                                _ ->
                                     Node { node | left = loop node.left, right = loop node.right }
             in
             loop rootedTournament
-
-        ( loopedResults, loopedTournament ) =
-            if hasValue trimmedTournament then
-                prune mergedResults trimmedTournament
-
-            else
-                ( mergedResults, trimmedTournament )
     in
-    ( loopedResults, loopedTournament )
+    if hasValue trimmedTournament then
+        prune mergedResults trimmedTournament
+
+    else
+        ( mergedResults, trimmedTournament )
 
 
 findMatches : Tournament -> List Comparison
@@ -177,10 +189,10 @@ findMatches tournament =
                                 ( Nothing, Nothing ) ->
                                     List.concat [ findMatches node.left, findMatches node.right ]
 
-                                ( Just l, Nothing ) ->
+                                ( Just _, Nothing ) ->
                                     findMatches node.right
 
-                                ( Nothing, Just r ) ->
+                                ( Nothing, Just _ ) ->
                                     findMatches node.left
 
                         ( Node _, Leaf Nothing ) ->
@@ -296,6 +308,7 @@ toBinaryTree tournament =
 view : Tournament -> Html msg
 view tournament =
     let
+        tree : BinaryTree (Maybe Value)
         tree =
             toBinaryTree tournament
 

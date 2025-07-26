@@ -1,15 +1,12 @@
-module Comparison exposing (..)
+module Comparison exposing (Comparison, toString)
 
 import Value exposing (Value)
 
 
 type alias Comparison =
-    { left : Value, right : Value }
-
-
-makeComparison : Value -> Value -> Comparison
-makeComparison left right =
-    { left = left, right = right }
+    { left : Value
+    , right : Value
+    }
 
 
 toString : Comparison -> String
