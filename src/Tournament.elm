@@ -4,6 +4,7 @@ module Tournament exposing
     , makeTournament
     , promote
     , prune
+    , step
     , view
     )
 
@@ -327,3 +328,15 @@ view tournament =
                 >> Maybe.withDefault ""
     in
     BinaryTreeDiagram.diagramView getColor getText tree
+
+
+step : List Value -> Tournament -> ( List Value, List Comparison, Tournament )
+step resultsSoFar tournament =
+    let
+        ( newResults, newTournament ) =
+            prune resultsSoFar tournament
+
+        newMatches =
+            findMatches newTournament
+    in
+    ( newResults, newMatches, newTournament )

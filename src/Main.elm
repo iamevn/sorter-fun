@@ -59,7 +59,7 @@ update msg model =
             )
 
         NewList values ->
-            ( stepTournament <|
+            ( step <|
                 Sorting
                     { results = []
                     , toCompare = []
@@ -77,7 +77,7 @@ update msg model =
                             ( model, Cmd.none )
 
                         cmp :: cmps ->
-                            ( stepTournament <|
+                            ( step <|
                                 Sorting
                                     { state
                                         | tournament = Tournament.promote cmp choice state.tournament
@@ -159,24 +159,20 @@ view model =
                 ]
 
 
-stepTournament : Model -> Model
-stepTournament model =
+step : Model -> Model
+step model =
     case model of
         Sorting sortingState ->
             let
-                ( newResults, newTournament ) =
-                    Tournament.prune sortingState.results sortingState.tournament
+                ( results, toCompare, tournament ) =
+                    Tournament.step sortingState.results sortingState.tournament
             in
-            case Tournament.findMatches newTournament of
+            case toCompare of
                 [] ->
-                    Sorted { ranked = List.reverse newResults, tournament = newTournament }
+                    Sorted { ranked = List.reverse results, tournament = tournament }
 
-                toCompare ->
-                    Sorting
-                        { results = newResults
-                        , toCompare = toCompare
-                        , tournament = newTournament
-                        }
+                _ ->
+                    Sorting { results = results, toCompare = toCompare, tournament = tournament }
 
         _ ->
             model
