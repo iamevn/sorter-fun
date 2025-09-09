@@ -89,3 +89,7 @@
     height: 6em;
   }
 }
+
+svg {
+  background: #c7c7c7;
+}
