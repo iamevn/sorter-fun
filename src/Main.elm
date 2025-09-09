@@ -1,3 +1,7 @@
+-- TODO: counter
+-- TODO: saving sorting state to url fragment
+
+
 module Main exposing (main)
 
 import Browser
