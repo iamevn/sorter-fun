@@ -3,7 +3,8 @@ module Main exposing (main)
 import Browser
 import Choice exposing (Choice)
 import Comparison exposing (Comparison)
-import Html exposing (Html, br, button, details, div, h1, li, ol, summary, text)
+import Html exposing (Html, br, button, details, div, h1, li, node, ol, summary, text)
+import Html.Attributes exposing (class, href, id, rel)
 import Html.Events exposing (onClick)
 import Random
 import Random.List exposing (shuffle)
@@ -97,24 +98,41 @@ resetButton =
 
 view : Model -> Html Msg
 view model =
+    let
+        styleLink =
+            node "link"
+                [ href "sorter.css"
+                , rel "stylesheet"
+                ]
+                []
+    in
     case model of
         Init ->
             div []
-                [ text "building list..."
+                [ styleLink
+                , text "building list..."
                 ]
 
         Sorting state ->
-            div []
-                [ h1 [] [ text "sorting" ]
+            div [ id "sort-root" ]
+                [ styleLink
                 , case state.toCompare of
                     [] ->
-                        div [] []
+                        div [ id "sort-container-empty" ] []
 
                     cmp :: _ ->
-                        div []
-                            [ button [ onClick (Pick Choice.Left) ]
+                        div [ id "sort-container" ]
+                            [ button
+                                [ onClick (Pick Choice.Left)
+                                , id "sort-left"
+                                , class "sort-option"
+                                ]
                                 [ Value.view cmp.left ]
-                            , button [ onClick (Pick Choice.Right) ]
+                            , button
+                                [ onClick (Pick Choice.Right)
+                                , id "sort-right"
+                                , class "sort-option"
+                                ]
                                 [ Value.view cmp.right ]
                             ]
                 , br [] []
@@ -140,8 +158,9 @@ view model =
                 ]
 
         Sorted results ->
-            div []
-                [ h1 [] [ text "sorted" ]
+            div [ id "sorted-root" ]
+                [ styleLink
+                , h1 [] [ text "Results" ]
                 , ol []
                     (List.map
                         (\value -> li [] [ Value.view value ])

@@ -1,0 +1,91 @@
+#sort-root {
+  #sort-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: stretch;
+    width: 90vw;
+    height: 90vh;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1em;
+  }
+
+  button.sort-option {
+    flex: 1 1;
+    position: relative;
+  }
+
+  .show {
+    height: 100%;
+  }
+
+  img.poster {
+    object-fit: contain;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: 100%;
+  }
+
+  .title {
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    font-size: large;
+  }
+
+  @media (orientation: portrait) {
+    #sort-container {
+      flex-direction: column;
+    }
+
+    button.sort-option {
+      height: 40vh;
+    }
+  }
+}
+
+#sorted-root {
+  margin: 0.5em;
+  ol {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16em, 1fr));
+    /* need to re-add counters for grid li */
+    counter-reset: ranking;
+    /* avoid doubled borders by only drawing top-left border around whole grid */
+    --border-style: solid 1px grey;
+    border-top: var(--border-style);
+    border-left: var(--border-style);
+    padding: 0;
+  }
+
+  li {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 0.5em;
+    /* avoid doubled borders by only drawing top-left border around whole grid */
+    border: var(--border-style);
+    border-top: 0;
+    border-left: 0;
+  }
+
+  div.show {
+    display: contents;
+  }
+
+  /* need to re-add counters for grid li */
+  .title::before {
+    counter-increment: ranking;
+    content: counter(ranking) ".";
+    margin-right: 0.5em;
+  }
+
+  .poster {
+    height: 6em;
+  }
+}
