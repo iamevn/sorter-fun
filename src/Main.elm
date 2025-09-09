@@ -1,4 +1,7 @@
--- TODO: counter
+-- TODO: progress counter
+-- TODO: make into a Browser.application
+-- TODO: arrow-key input
+-- TODO: seed randomness either from url param or something else
 -- TODO: saving sorting state to url fragment
 
 
