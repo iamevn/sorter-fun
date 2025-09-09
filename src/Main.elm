@@ -120,33 +120,35 @@ view model =
                 ]
 
         Sorting state ->
-            div [ id "sort-root" ]
+            div []
                 [ styleLink
                 , case state.toCompare of
                     [] ->
-                        div [ id "sort-container-empty" ] []
+                        div [] []
 
                     cmp :: _ ->
-                        div [ id "sort-container" ]
-                            [ button
-                                [ onClick (Pick Choice.Left)
-                                , id "sort-left"
-                                , class "sort-option"
+                        div [ id "sort-root" ]
+                            [ div [ id "sort-container" ]
+                                [ button
+                                    [ onClick (Pick Choice.Left)
+                                    , id "sort-left"
+                                    , class "sort-option"
+                                    ]
+                                    [ Value.view cmp.left ]
+                                , button
+                                    [ onClick (Pick Choice.Right)
+                                    , id "sort-right"
+                                    , class "sort-option"
+                                    ]
+                                    [ Value.view cmp.right ]
                                 ]
-                                [ Value.view cmp.left ]
-                            , button
-                                [ onClick (Pick Choice.Right)
-                                , id "sort-right"
-                                , class "sort-option"
-                                ]
-                                [ Value.view cmp.right ]
                             ]
                 , br [] []
                 , resetButton
                 , details
                     []
                     [ summary [] [ text "debug" ]
-                    , div []
+                    , div [ id "sorted-root" ]
                         [ text "Results: "
                         , ol []
                             (List.map
