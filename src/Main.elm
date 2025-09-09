@@ -13,7 +13,7 @@ import Comparison exposing (Comparison)
 import Html exposing (Html, br, button, details, div, h1, li, node, ol, summary, text)
 import Html.Attributes exposing (class, href, id, rel)
 import Html.Events exposing (onClick)
-import Random
+import Random exposing (generate)
 import Random.List exposing (shuffle)
 import Tournament exposing (Tournament)
 import Value exposing (Value)
@@ -48,7 +48,7 @@ type Msg
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( Init
-    , Random.generate NewList <| shuffle Value.demoValues
+    , generate NewList <| shuffle Value.demoValues
     )
 
 
@@ -62,8 +62,7 @@ update msg model =
     case msg of
         Reset ->
             ( model
-            , Random.generate NewList
-                (Random.List.shuffle Value.demoValues)
+            , generate NewList <| shuffle Value.demoValues
             )
 
         NewList values ->
