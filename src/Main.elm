@@ -1,4 +1,3 @@
--- TODO: counter should update estimate as things graduate from tournament
 -- TODO: make into a Browser.application
 -- TODO: arrow-key input
 -- TODO: seed randomness either from url param or something else
@@ -30,16 +29,20 @@ main =
         }
 
 
+type alias SortingState =
+    { results : List Value
+    , toCompare : List Comparison
+    , tournament : Tournament
+    , currentStep : Int
+    , estimatedSteps : Int
+    , originalValues : List Value
+    }
+
+
 type Model
     = Init
-    | Sorting
-        { results : List Value
-        , toCompare : List Comparison
-        , tournament : Tournament
-        , currentStep : Int
-        , estimatedSteps : Int
-        }
-    | Sorted { ranked : List Value, tournament : Tournament }
+    | Sorting SortingState
+    | Sorted { ranked : List Value, tournament : Tournament, stepCount : Int }
 
 
 type Msg
@@ -75,7 +78,8 @@ update msg model =
                     , toCompare = []
                     , tournament = Tournament.makeTournament values
                     , currentStep = 0
-                    , estimatedSteps = expectedComparisons <| List.length values
+                    , estimatedSteps = maxComparisonSteps <| List.length values
+                    , originalValues = values
                     }
             , Cmd.none
             )
@@ -186,9 +190,21 @@ view model =
                 ]
 
         Sorted results ->
+            let
+                comparisonsText =
+                    case results.stepCount of
+                        0 ->
+                            "no comparisons"
+
+                        1 ->
+                            "1 comparison"
+
+                        n ->
+                            String.fromInt n ++ " comparisons"
+            in
             div [ id "sorted-root" ]
                 [ styleLink
-                , h1 [] [ text "Results" ]
+                , h1 [] [ text <| "Results after " ++ comparisonsText ]
                 , ol []
                     (List.map
                         (\value -> li [] [ Value.view value ])
@@ -216,23 +232,53 @@ step model =
             in
             case toCompare of
                 [] ->
-                    Sorted { ranked = List.reverse results, tournament = tournament }
+                    Sorted { ranked = List.reverse results, tournament = tournament, stepCount = sortingState.currentStep }
 
                 _ ->
-                    Sorting
-                        { results = results
-                        , toCompare = toCompare
-                        , tournament = tournament
-                        , currentStep = sortingState.currentStep + 1
-                        , estimatedSteps = sortingState.estimatedSteps
-                        }
+                    Sorting <|
+                        updateStepEstimate
+                            { sortingState
+                                | results = results
+                                , toCompare = toCompare
+                                , tournament = tournament
+                                , currentStep = sortingState.currentStep + 1
+                            }
 
         _ ->
             model
 
 
-expectedComparisons : Int -> Int
-expectedComparisons itemCount =
+updateStepEstimate : SortingState -> SortingState
+updateStepEstimate sortingState =
+    let
+        totalCount =
+            List.length sortingState.originalValues
+
+        resultCount =
+            List.length sortingState.results
+
+        prevEstimate =
+            sortingState.estimatedSteps
+
+        maxTotalSteps =
+            maxComparisonSteps totalCount
+
+        remainingCount =
+            totalCount - resultCount
+
+        maxRemainingSteps =
+            maxComparisonSteps remainingCount
+
+        newEstimate =
+            min maxTotalSteps (sortingState.currentStep + maxRemainingSteps)
+    in
+    { sortingState
+        | estimatedSteps = min newEstimate prevEstimate
+    }
+
+
+maxComparisonSteps : Int -> Int
+maxComparisonSteps itemCount =
     if itemCount <= 1 then
         0
 
@@ -248,7 +294,7 @@ expectedComparisons itemCount =
                 ceiling halfCount
         in
         List.sum
-            [ expectedComparisons halfLower
-            , expectedComparisons halfUpper
+            [ maxComparisonSteps halfLower
+            , maxComparisonSteps halfUpper
             , itemCount - 1
             ]
