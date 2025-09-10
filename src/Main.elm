@@ -3,6 +3,7 @@
 -- TODO: arrow-key input
 -- TODO: seed randomness either from url param or something else
 -- TODO: saving sorting state to url fragment
+-- TODO: pick random comparsion when there are multiple candidates
 
 
 module Main exposing (main)
