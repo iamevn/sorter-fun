@@ -241,24 +241,21 @@ viewSorted results =
 
 view : Model -> Document Msg
 view model =
-    let
-        title =
-            "Gundam Sorter"
+    { title =
+        "Gundam Sorter"
+    , body =
+        stylesheet "sorter.css"
+            :: (case model of
+                    Init ->
+                        viewInit
 
-        body =
-            stylesheet "sorter.css"
-                :: (case model of
-                        Init ->
-                            viewInit
+                    Sorting state ->
+                        viewSorting state
 
-                        Sorting state ->
-                            viewSorting state
-
-                        Sorted results ->
-                            viewSorted results
-                   )
-    in
-    { title = title, body = body }
+                    Sorted results ->
+                        viewSorted results
+               )
+    }
 
 
 step : Model -> Model
