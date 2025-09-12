@@ -7,7 +7,8 @@
 
 module Main exposing (main)
 
-import Browser
+import Browser exposing (Document, UrlRequest)
+import Browser.Navigation exposing (Key)
 import Choice exposing (Choice)
 import Comparison exposing (Comparison)
 import Html exposing (Html, br, button, details, div, h1, li, node, ol, span, summary, text)
@@ -16,18 +17,19 @@ import Html.Events exposing (onClick)
 import Random exposing (generate)
 import Random.List exposing (shuffle)
 import Tournament exposing (Tournament)
+import Url exposing (Url)
 import Value exposing (Value)
 
 
 main : Program () Model Msg
 main =
     Browser.application
-        { init = \flags _ _ -> init flags
+        { init = init
         , update = update
         , subscriptions = subscriptions
-        , view = \model -> { title = "Gundam Sorter", body = [ view model ] }
-        , onUrlRequest = \_ -> Noop
-        , onUrlChange = \_ -> Noop
+        , view = view
+        , onUrlRequest = onUrlRequest
+        , onUrlChange = onUrlChange
         }
 
 
@@ -41,10 +43,14 @@ type alias SortingState =
     }
 
 
+type alias SortedResults =
+    { ranked : List Value, tournament : Tournament, stepCount : Int }
+
+
 type Model
     = Init
     | Sorting SortingState
-    | Sorted { ranked : List Value, tournament : Tournament, stepCount : Int }
+    | Sorted SortedResults
 
 
 type Msg
@@ -54,11 +60,22 @@ type Msg
     | Reset
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
+init : () -> Url -> Key -> ( Model, Cmd Msg )
+init _ _ _ =
+    -- TODO: store key and init based on url
     ( Init
     , generate NewList <| shuffle Value.demoValues
     )
+
+
+onUrlRequest : UrlRequest -> Msg
+onUrlRequest _ =
+    Noop
+
+
+onUrlChange : Url -> Msg
+onUrlChange _ =
+    Noop
 
 
 subscriptions : Model -> Sub Msg
@@ -126,106 +143,122 @@ stylesheet path =
         []
 
 
-view : Model -> Html Msg
-view model =
-    let
-        styleLink =
-            stylesheet "sorter.css"
-    in
-    case model of
-        Init ->
-            div []
-                [ styleLink
-                , text "building list..."
-                ]
+viewInit : List (Html Msg)
+viewInit =
+    [ text "building list..."
+    ]
 
-        Sorting state ->
-            div []
-                [ styleLink
-                , case state.toCompare of
-                    [] ->
-                        div [] []
 
-                    cmp :: _ ->
-                        div [ id "sort-root" ]
-                            [ div [ id "sort-container" ]
-                                [ button
-                                    [ onClick (Pick Choice.Left)
-                                    , id "sort-left"
-                                    , class "sort-option"
-                                    ]
-                                    [ Value.view cmp.left ]
-                                , div [ id "sort-status" ]
-                                    [ span []
-                                        (List.map text
-                                            [ "Comparison "
-                                            , String.fromInt state.currentStep
-                                            , " / "
-                                            , String.fromInt state.estimatedSteps
-                                            ]
-                                        )
-                                    ]
-                                , button
-                                    [ onClick (Pick Choice.Right)
-                                    , id "sort-right"
-                                    , class "sort-option"
-                                    ]
-                                    [ Value.view cmp.right ]
+viewSorting : SortingState -> List (Html Msg)
+viewSorting state =
+    [ case state.toCompare of
+        [] ->
+            div [] []
+
+        cmp :: _ ->
+            div [ id "sort-root" ]
+                [ div [ id "sort-container" ]
+                    [ button
+                        [ onClick (Pick Choice.Left)
+                        , id "sort-left"
+                        , class "sort-option"
+                        ]
+                        [ Value.view cmp.left ]
+                    , div [ id "sort-status" ]
+                        [ span []
+                            (List.map text
+                                [ "Comparison "
+                                , String.fromInt state.currentStep
+                                , " / "
+                                , String.fromInt state.estimatedSteps
                                 ]
-                            ]
-                , br [] []
-                , resetButton
-                , details
-                    []
-                    [ summary [] [ text "debug" ]
-                    , div [ id "sorted-root" ]
-                        [ text "Results: "
-                        , ol []
-                            (List.map
-                                (\value -> li [] [ Value.view value ])
-                                (List.reverse state.results)
                             )
                         ]
-                    , div []
-                        [ text "To compare:"
-                        , br [] []
-                        , List.map Comparison.toString state.toCompare |> String.join ", " |> text
+                    , button
+                        [ onClick (Pick Choice.Right)
+                        , id "sort-right"
+                        , class "sort-option"
                         ]
-                    , Tournament.view state.tournament
+                        [ Value.view cmp.right ]
                     ]
                 ]
+    , br [] []
+    , resetButton
+    , details
+        []
+        [ summary [] [ text "debug" ]
+        , div [ id "sorted-root" ]
+            [ text "Results: "
+            , ol []
+                (List.map
+                    (\value -> li [] [ Value.view value ])
+                    (List.reverse state.results)
+                )
+            ]
+        , div []
+            [ text "To compare:"
+            , br [] []
+            , List.map Comparison.toString state.toCompare |> String.join ", " |> text
+            ]
+        , Tournament.view state.tournament
+        ]
+    ]
 
-        Sorted results ->
-            let
-                comparisonsText =
-                    case results.stepCount of
-                        0 ->
-                            "no comparisons"
 
-                        1 ->
-                            "1 comparison"
+viewSorted : SortedResults -> List (Html Msg)
+viewSorted results =
+    let
+        comparisonsText =
+            case results.stepCount of
+                0 ->
+                    "no comparisons"
 
-                        n ->
-                            String.fromInt n ++ " comparisons"
-            in
-            div [ id "sorted-root" ]
-                [ styleLink
-                , h1 [] [ text <| "Results after " ++ comparisonsText ]
-                , ol []
-                    (List.map
-                        (\value -> li [] [ Value.view value ])
-                        results.ranked
-                    )
-                , if results.tournament /= Tournament.Leaf Nothing then
-                    details []
-                        [ summary [] [ text "debug" ]
-                        , Tournament.view results.tournament
-                        ]
+                1 ->
+                    "1 comparison"
 
-                  else
-                    div [] []
-                , resetButton
+                n ->
+                    String.fromInt n ++ " comparisons"
+    in
+    [ div [ id "sorted-root" ]
+        [ h1 [] [ text <| "Results after " ++ comparisonsText ]
+        , ol []
+            (List.map
+                (\value -> li [] [ Value.view value ])
+                results.ranked
+            )
+        , if results.tournament /= Tournament.Leaf Nothing then
+            details []
+                [ summary [] [ text "debug" ]
+                , Tournament.view results.tournament
                 ]
+
+          else
+            div [] []
+        , resetButton
+        ]
+    ]
+
+
+view : Model -> Document Msg
+view model =
+    let
+        title =
+            "Gundam Sorter"
+
+        body =
+            stylesheet "sorter.css"
+                :: (case model of
+                        Init ->
+                            viewInit
+
+                        Sorting state ->
+                            viewSorting state
+
+                        Sorted results ->
+                            viewSorted results
+                   )
+    in
+    { title = title, body = body }
 
 
 step : Model -> Model
