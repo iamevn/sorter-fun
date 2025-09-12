@@ -1,4 +1,3 @@
--- TODO: make into a Browser.application
 -- TODO: arrow-key input
 -- TODO: seed randomness either from url param or something else
 -- TODO: saving sorting state to url fragment
@@ -22,11 +21,13 @@ import Value exposing (Value)
 
 main : Program () Model Msg
 main =
-    Browser.element
-        { init = init
+    Browser.application
+        { init = \flags _ _ -> init flags
         , update = update
         , subscriptions = subscriptions
-        , view = view
+        , view = \model -> { title = "Gundam Sorter", body = [ view model ] }
+        , onUrlRequest = \_ -> Noop
+        , onUrlChange = \_ -> Noop
         }
 
 
@@ -49,6 +50,7 @@ type Model
 type Msg
     = NewList (List Value)
     | Pick Choice
+    | Noop
     | Reset
 
 
@@ -67,6 +69,9 @@ subscriptions _ =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        Noop ->
+            ( model, Cmd.none )
+
         Reset ->
             ( model
             , generate NewList <| shuffle Value.demoValues
