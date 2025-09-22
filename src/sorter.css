@@ -93,3 +93,18 @@
 svg {
   background: #c7c7c7;
 }
+
+#setup-root {
+  --pill-width: 20em;
+  column-width: var(--pill-width);
+  column-fill: balance;
+
+  label {
+    display: inline-flex;
+    align-items: center;
+    border: 1px dashed grey;
+    border-radius: 10px;
+    width: var(--pill-width);
+    padding: 0.25em;
+  }
+}

@@ -1,42 +1,31 @@
-module Value exposing (Value, ValueCmp, demoValues, fromCmp, setToValueList, toCmp, toString, view)
+module Value exposing (Value, ValueCmp, getValues, gundam, toCmp, toString, view)
 
+import Dict exposing (Dict)
 import Html exposing (Html, div, img, text)
 import Html.Attributes exposing (class, src)
 import Set exposing (Set)
 
 
 type alias Value =
-    { title : String
+    { id : String
+    , title : String
     , imagePath : String
     , anilistId : Maybe Int
     }
 
 
 type alias ValueCmp =
-    ( String, String, Int )
+    String
 
 
 toCmp : Value -> ValueCmp
 toCmp value =
-    ( value.title, value.imagePath, Maybe.withDefault -1 value.anilistId )
+    value.id
 
 
-fromCmp : ValueCmp -> Value
-fromCmp ( title, imagePath, intId ) =
-    { title = title
-    , imagePath = imagePath
-    , anilistId =
-        if intId >= 0 then
-            Just intId
-
-        else
-            Nothing
-    }
-
-
-setToValueList : Set ValueCmp -> List Value
-setToValueList =
-    Set.toList >> List.map fromCmp
+getValues : Set ValueCmp -> List Value
+getValues =
+    Set.toList >> List.filterMap getValue
 
 
 toString : Value -> String
@@ -54,37 +43,48 @@ view value =
         ]
 
 
-demoValues : List Value
-demoValues =
-    [ { title = "Mobile Suit Gundam 0079", imagePath = "covers/80.jpg", anilistId = Just 80 }
-    , { title = "Zeta Gundam", imagePath = "covers/85.jpg", anilistId = Just 85 }
-    , { title = "ZZ", imagePath = "covers/86.png", anilistId = Just 86 }
-    , { title = "Char's Counterattack", imagePath = "covers/87.png", anilistId = Just 87 }
-    , { title = "early SD gundam shorts (Mk-I–Mk-V/Counterattack/Gaiden)", imagePath = "covers/2302.jpg", anilistId = Just 2302 }
-    , { title = "0080 War in the Pocket", imagePath = "covers/82.png", anilistId = Just 82 }
-    , { title = "F91", imagePath = "covers/88.png", anilistId = Just 88 }
-    , { title = "0083 Stardust Memory", imagePath = "covers/84.jpg", anilistId = Just 84 }
-    , { title = "Victory Gundam", imagePath = "covers/89.jpg", anilistId = Just 89 }
-    , { title = "G Gundam", imagePath = "covers/96.png", anilistId = Just 96 }
-    , { title = "Gundam Wing", imagePath = "covers/90.png", anilistId = Just 90 }
-    , { title = "08th MS Team", imagePath = "covers/81.jpg", anilistId = Just 81 }
-    , { title = "After War Gundam X", imagePath = "covers/92.png", anilistId = Just 92 }
-    , { title = "Wing Endless Waltz", imagePath = "covers/91.png", anilistId = Just 91 }
-    , { title = "Turn A Gundam", imagePath = "covers/95.jpg", anilistId = Just 95 }
-    , { title = "G-Saviour", imagePath = "covers/GSaviour.jpg", anilistId = Nothing }
-    , { title = "SEED", imagePath = "covers/93.jpg", anilistId = Just 93 }
-    , { title = "SD Gundam Force", imagePath = "covers/2391.jpg", anilistId = Just 2391 }
-    , { title = "SEED Destiny", imagePath = "covers/94.jpg", anilistId = Just 94 }
-    , { title = "Seed Supernova", imagePath = "covers/2743.jpg", anilistId = Just 2743 }
-    , { title = "MS IGLOO", imagePath = "covers/igloo.jpg", anilistId = Just 1917 }
-    , { title = "MS IGLOO 2", imagePath = "covers/igloo2.jpg", anilistId = Just 4232 }
-    , { title = "Witch from Mercury", imagePath = "covers/139274.png", anilistId = Just 139274 }
-    , { title = "GQuuuuuuX", imagePath = "covers/185213.jpg", anilistId = Just 185213 }
-    , { title = "Gundam Neo Experience 0087: Green Divers", imagePath = "covers/8839.jpg", anilistId = Just 8839 }
-    , { title = "Mobile Suit Zeta Gundam: A New Translation", imagePath = "covers/1967.png", anilistId = Just 1967 }
-    , { title = "Mobile Suit Gundam Seed MSV Astray", imagePath = "covers/864.png", anilistId = Just 864 }
-    , { title = "Mobile Suit Gundam Seed C.E.73: Stargazer", imagePath = "covers/1215.jpg", anilistId = Just 1215 }
-    , { title = "Gundam: Mission To The Rise", imagePath = "covers/4540.png", anilistId = Just 4540 }
-    , { title = "Ring of Gundam", imagePath = "covers/7060.jpg", anilistId = Just 7060 }
-    , { title = "Gundam EVOLVE", imagePath = "covers/3288.jpg", anilistId = Just 3288 }
+gundam : List Value
+gundam =
+    [ { id = "", title = "Mobile Suit Gundam 0079", imagePath = "covers/80.jpg", anilistId = Just 80 }
+    , { id = "", title = "Zeta Gundam", imagePath = "covers/85.jpg", anilistId = Just 85 }
+    , { id = "", title = "ZZ", imagePath = "covers/86.png", anilistId = Just 86 }
+    , { id = "", title = "Char's Counterattack", imagePath = "covers/87.png", anilistId = Just 87 }
+    , { id = "", title = "early SD gundam shorts (Mk-I–Mk-V/Counterattack/Gaiden)", imagePath = "covers/2302.jpg", anilistId = Just 2302 }
+    , { id = "", title = "0080 War in the Pocket", imagePath = "covers/82.png", anilistId = Just 82 }
+    , { id = "", title = "F91", imagePath = "covers/88.png", anilistId = Just 88 }
+    , { id = "", title = "0083 Stardust Memory", imagePath = "covers/84.jpg", anilistId = Just 84 }
+    , { id = "", title = "Victory Gundam", imagePath = "covers/89.jpg", anilistId = Just 89 }
+    , { id = "", title = "G Gundam", imagePath = "covers/96.png", anilistId = Just 96 }
+    , { id = "", title = "Gundam Wing", imagePath = "covers/90.png", anilistId = Just 90 }
+    , { id = "", title = "08th MS Team", imagePath = "covers/81.jpg", anilistId = Just 81 }
+    , { id = "", title = "After War Gundam X", imagePath = "covers/92.png", anilistId = Just 92 }
+    , { id = "", title = "Wing Endless Waltz", imagePath = "covers/91.png", anilistId = Just 91 }
+    , { id = "", title = "Turn A Gundam", imagePath = "covers/95.jpg", anilistId = Just 95 }
+    , { id = "", title = "G-Saviour", imagePath = "covers/GSaviour.jpg", anilistId = Nothing }
+    , { id = "", title = "SEED", imagePath = "covers/93.jpg", anilistId = Just 93 }
+    , { id = "", title = "SD Gundam Force", imagePath = "covers/2391.jpg", anilistId = Just 2391 }
+    , { id = "", title = "SEED Destiny", imagePath = "covers/94.jpg", anilistId = Just 94 }
+    , { id = "", title = "Seed Supernova", imagePath = "covers/2743.jpg", anilistId = Just 2743 }
+    , { id = "", title = "MS IGLOO", imagePath = "covers/igloo.jpg", anilistId = Just 1917 }
+    , { id = "", title = "MS IGLOO 2", imagePath = "covers/igloo2.jpg", anilistId = Just 4232 }
+    , { id = "", title = "Witch from Mercury", imagePath = "covers/139274.png", anilistId = Just 139274 }
+    , { id = "", title = "GQuuuuuuX", imagePath = "covers/185213.jpg", anilistId = Just 185213 }
+    , { id = "", title = "Gundam Neo Experience 0087: Green Divers", imagePath = "covers/8839.jpg", anilistId = Just 8839 }
+    , { id = "", title = "Mobile Suit Zeta Gundam: A New Translation", imagePath = "covers/1967.png", anilistId = Just 1967 }
+    , { id = "", title = "Mobile Suit Gundam Seed MSV Astray", imagePath = "covers/864.png", anilistId = Just 864 }
+    , { id = "", title = "Mobile Suit Gundam Seed C.E.73: Stargazer", imagePath = "covers/1215.jpg", anilistId = Just 1215 }
+    , { id = "", title = "Gundam: Mission To The Rise", imagePath = "covers/4540.png", anilistId = Just 4540 }
+    , { id = "", title = "Ring of Gundam", imagePath = "covers/7060.jpg", anilistId = Just 7060 }
+    , { id = "", title = "Gundam EVOLVE", imagePath = "covers/3288.jpg", anilistId = Just 3288 }
     ]
+
+
+gundamMap : Dict ValueCmp Value
+gundamMap =
+    List.map (\v -> ( v.id, v )) gundam
+        |> Dict.fromList
+
+
+getValue : String -> Maybe Value
+getValue id =
+    Dict.get id gundamMap

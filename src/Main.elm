@@ -72,7 +72,7 @@ type Model
 
 type Msg
     = NewList (List Value)
-    | SetupSelect Value Bool
+    | SetupSelect (List Value) Bool
     | FinishSetup (List Value)
     | Pick Choice
     | Noop
@@ -121,23 +121,24 @@ update msg model =
         Noop ->
             ( model, Cmd.none )
 
-        SetupSelect value checked ->
+        SetupSelect values checked ->
             case model of
                 Setup state ->
                     let
-                        v =
-                            Value.toCmp value
+                        vs =
+                            List.map Value.toCmp values
+                                |> Set.fromList
 
                         setFn =
                             if checked then
-                                Set.insert
+                                Set.union
 
                             else
-                                Set.remove
+                                Set.diff
                     in
                     ( Setup
                         { state
-                            | chosen = setFn v state.chosen
+                            | chosen = setFn state.chosen vs
                         }
                     , Cmd.none
                     )
@@ -207,7 +208,7 @@ stylesheet path =
 
 initSetup : SetupState
 initSetup =
-    { entries = Value.demoValues, chosen = Set.empty }
+    { entries = Value.gundam, chosen = Set.empty }
 
 
 viewSetup : SetupState -> List (Html Msg)
@@ -224,7 +225,7 @@ viewSetup state =
                 [ input
                     [ type_ "checkbox"
                     , checked <| Set.member (Value.toCmp value) state.chosen
-                    , onCheck (SetupSelect value)
+                    , onCheck (SetupSelect [ value ])
                     ]
                     []
                 , text <| Value.toString value
@@ -233,9 +234,15 @@ viewSetup state =
         checkboxes =
             List.map makeCheckbox state.entries
     in
-    [ fieldset [] (header :: checkboxes)
+    [ fieldset [ id "setup-root" ] (header :: checkboxes)
     , button
-        [ onClick (FinishSetup (Value.setToValueList state.chosen)) ]
+        [ onClick (SetupSelect state.entries True) ]
+        [ text "Select all" ]
+    , button
+        [ onClick (SetupSelect state.entries False) ]
+        [ text "Select none" ]
+    , button
+        [ onClick (FinishSetup (Value.getValues state.chosen)) ]
         [ text "Start Sorting" ]
     ]
 
