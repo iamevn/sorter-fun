@@ -1,7 +1,8 @@
-module Value exposing (Value, demoValues, toString, view)
+module Value exposing (Value, ValueCmp, demoValues, fromCmp, setToValueList, toCmp, toString, view)
 
 import Html exposing (Html, div, img, text)
 import Html.Attributes exposing (class, src)
+import Set exposing (Set)
 
 
 type alias Value =
@@ -9,6 +10,33 @@ type alias Value =
     , imagePath : String
     , anilistId : Maybe Int
     }
+
+
+type alias ValueCmp =
+    ( String, String, Int )
+
+
+toCmp : Value -> ValueCmp
+toCmp value =
+    ( value.title, value.imagePath, Maybe.withDefault -1 value.anilistId )
+
+
+fromCmp : ValueCmp -> Value
+fromCmp ( title, imagePath, intId ) =
+    { title = title
+    , imagePath = imagePath
+    , anilistId =
+        if intId >= 0 then
+            Just intId
+
+        else
+            Nothing
+    }
+
+
+setToValueList : Set ValueCmp -> List Value
+setToValueList =
+    Set.toList >> List.map fromCmp
 
 
 toString : Value -> String

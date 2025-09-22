@@ -11,14 +11,15 @@ import Browser exposing (Document, UrlRequest)
 import Browser.Navigation exposing (Key)
 import Choice exposing (Choice)
 import Comparison exposing (Comparison)
-import Html exposing (Html, br, button, details, div, h1, li, node, ol, span, summary, text)
-import Html.Attributes exposing (class, href, id, rel)
-import Html.Events exposing (onClick)
+import Html exposing (Html, br, button, details, div, fieldset, h1, input, label, legend, li, node, ol, span, summary, text)
+import Html.Attributes exposing (checked, class, href, id, rel, type_)
+import Html.Events exposing (onCheck, onClick)
 import Random exposing (generate)
 import Random.List exposing (shuffle)
+import Set exposing (Set)
 import Tournament exposing (Tournament)
 import Url exposing (Url)
-import Value exposing (Value)
+import Value exposing (Value, ValueCmp)
 
 
 main : Program () Model Msg
@@ -31,6 +32,16 @@ main =
         , onUrlRequest = onUrlRequest
         , onUrlChange = onUrlChange
         }
+
+
+type alias ChosenValues =
+    Set ValueCmp
+
+
+type alias SetupState =
+    { entries : List Value
+    , chosen : ChosenValues
+    }
 
 
 type alias SortingState =
@@ -48,13 +59,15 @@ type alias SortedResults =
 
 
 type Model
-    = Init
-    | Sorting SortingState
-    | Sorted SortedResults
+    = Setup SetupState
+    | Sorting SortingState ChosenValues
+    | Sorted SortedResults ChosenValues
 
 
 type Msg
     = NewList (List Value)
+    | SetupSelect Value Bool
+    | FinishSetup (List Value)
     | Pick Choice
     | Noop
     | Reset
@@ -63,8 +76,8 @@ type Msg
 init : () -> Url -> Key -> ( Model, Cmd Msg )
 init _ _ _ =
     -- TODO: store key and init based on url
-    ( Init
-    , generate NewList <| shuffle Value.demoValues
+    ( Setup initSetup
+    , Cmd.none
     )
 
 
@@ -83,15 +96,57 @@ subscriptions _ =
     Sub.none
 
 
+getChosenValues : Model -> ChosenValues
+getChosenValues model =
+    case model of
+        Setup { chosen } ->
+            chosen
+
+        Sorting _ chosen ->
+            chosen
+
+        Sorted _ chosen ->
+            chosen
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Noop ->
             ( model, Cmd.none )
 
-        Reset ->
+        SetupSelect value checked ->
+            case model of
+                Setup state ->
+                    let
+                        v =
+                            Value.toCmp value
+
+                        setFn =
+                            if checked then
+                                Set.insert
+
+                            else
+                                Set.remove
+                    in
+                    ( Setup
+                        { state
+                            | chosen = setFn v state.chosen
+                        }
+                    , Cmd.none
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        FinishSetup picked ->
             ( model
-            , generate NewList <| shuffle Value.demoValues
+            , generate NewList <| shuffle picked
+            )
+
+        Reset ->
+            ( Setup { initSetup | chosen = getChosenValues model }
+            , Cmd.none
             )
 
         NewList values ->
@@ -104,12 +159,13 @@ update msg model =
                     , estimatedSteps = maxComparisonSteps <| List.length values
                     , originalValues = values
                     }
+                    (getChosenValues model)
             , Cmd.none
             )
 
         Pick choice ->
             case model of
-                Sorting state ->
+                Sorting state chosenValues ->
                     case state.toCompare of
                         [] ->
                             --maybe should error here?
@@ -122,6 +178,7 @@ update msg model =
                                         | tournament = Tournament.promote cmp choice state.tournament
                                         , toCompare = cmps
                                     }
+                                    chosenValues
                             , Cmd.none
                             )
 
@@ -143,9 +200,38 @@ stylesheet path =
         []
 
 
-viewInit : List (Html Msg)
-viewInit =
-    [ text "building list..."
+initSetup : SetupState
+initSetup =
+    { entries = Value.demoValues, chosen = Set.empty }
+
+
+viewSetup : SetupState -> List (Html Msg)
+viewSetup state =
+    let
+        header =
+            legend
+                []
+                [ text "Pick Shows to sort" ]
+
+        makeCheckbox : Value -> Html Msg
+        makeCheckbox value =
+            label []
+                [ input
+                    [ type_ "checkbox"
+                    , checked <| Set.member (Value.toCmp value) state.chosen
+                    , onCheck (SetupSelect value)
+                    ]
+                    []
+                , text <| Value.toString value
+                ]
+
+        checkboxes =
+            List.map makeCheckbox state.entries
+    in
+    [ fieldset [] (header :: checkboxes)
+    , button
+        [ onClick (FinishSetup (Value.setToValueList state.chosen)) ]
+        [ text "Start Sorting" ]
     ]
 
 
@@ -246,13 +332,13 @@ view model =
     , body =
         stylesheet "sorter.css"
             :: (case model of
-                    Init ->
-                        viewInit
+                    Setup state ->
+                        viewSetup state
 
-                    Sorting state ->
+                    Sorting state _ ->
                         viewSorting state
 
-                    Sorted results ->
+                    Sorted results _ ->
                         viewSorted results
                )
     }
@@ -261,17 +347,19 @@ view model =
 step : Model -> Model
 step model =
     case model of
-        Sorting sortingState ->
+        Sorting sortingState chosenValues ->
             let
                 ( results, toCompare, tournament ) =
                     Tournament.step sortingState.results sortingState.tournament
             in
             case toCompare of
                 [] ->
-                    Sorted { ranked = List.reverse results, tournament = tournament, stepCount = sortingState.currentStep }
+                    Sorted
+                        { ranked = List.reverse results, tournament = tournament, stepCount = sortingState.currentStep }
+                        chosenValues
 
                 _ ->
-                    Sorting <|
+                    (Sorting <|
                         updateStepEstimate
                             { sortingState
                                 | results = results
@@ -279,6 +367,9 @@ step model =
                                 , tournament = tournament
                                 , currentStep = sortingState.currentStep + 1
                             }
+                    )
+                    <|
+                        getChosenValues model
 
         _ ->
             model
