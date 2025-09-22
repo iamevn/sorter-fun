@@ -2,7 +2,8 @@
 -- TODO: seed randomness either from url param or something else
 -- TODO: saving sorting state to url fragment
 -- TODO: pick random comparsion when there are multiple candidates
--- TODO: pick which shows to sort
+-- TODO: add more shows for picking
+-- TODO: add presets for picking
 
 
 module Main exposing (main)
@@ -51,17 +52,22 @@ type alias SortingState =
     , currentStep : Int
     , estimatedSteps : Int
     , originalValues : List Value
+    , chosen : ChosenValues
     }
 
 
 type alias SortedResults =
-    { ranked : List Value, tournament : Tournament, stepCount : Int }
+    { ranked : List Value
+    , tournament : Tournament
+    , stepCount : Int
+    , chosen : ChosenValues
+    }
 
 
 type Model
     = Setup SetupState
-    | Sorting SortingState ChosenValues
-    | Sorted SortedResults ChosenValues
+    | Sorting SortingState
+    | Sorted SortedResults
 
 
 type Msg
@@ -102,10 +108,10 @@ getChosenValues model =
         Setup { chosen } ->
             chosen
 
-        Sorting _ chosen ->
+        Sorting { chosen } ->
             chosen
 
-        Sorted _ chosen ->
+        Sorted { chosen } ->
             chosen
 
 
@@ -158,14 +164,14 @@ update msg model =
                     , currentStep = 0
                     , estimatedSteps = maxComparisonSteps <| List.length values
                     , originalValues = values
+                    , chosen = getChosenValues model
                     }
-                    (getChosenValues model)
             , Cmd.none
             )
 
         Pick choice ->
             case model of
-                Sorting state chosenValues ->
+                Sorting state ->
                     case state.toCompare of
                         [] ->
                             --maybe should error here?
@@ -178,7 +184,6 @@ update msg model =
                                         | tournament = Tournament.promote cmp choice state.tournament
                                         , toCompare = cmps
                                     }
-                                    chosenValues
                             , Cmd.none
                             )
 
@@ -335,10 +340,10 @@ view model =
                     Setup state ->
                         viewSetup state
 
-                    Sorting state _ ->
+                    Sorting state ->
                         viewSorting state
 
-                    Sorted results _ ->
+                    Sorted results ->
                         viewSorted results
                )
     }
@@ -347,7 +352,7 @@ view model =
 step : Model -> Model
 step model =
     case model of
-        Sorting sortingState chosenValues ->
+        Sorting sortingState ->
             let
                 ( results, toCompare, tournament ) =
                     Tournament.step sortingState.results sortingState.tournament
@@ -355,11 +360,14 @@ step model =
             case toCompare of
                 [] ->
                     Sorted
-                        { ranked = List.reverse results, tournament = tournament, stepCount = sortingState.currentStep }
-                        chosenValues
+                        { ranked = List.reverse results
+                        , tournament = tournament
+                        , stepCount = sortingState.currentStep
+                        , chosen = sortingState.chosen
+                        }
 
                 _ ->
-                    (Sorting <|
+                    Sorting <|
                         updateStepEstimate
                             { sortingState
                                 | results = results
@@ -367,9 +375,6 @@ step model =
                                 , tournament = tournament
                                 , currentStep = sortingState.currentStep + 1
                             }
-                    )
-                    <|
-                        getChosenValues model
 
         _ ->
             model
