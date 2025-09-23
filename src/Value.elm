@@ -47,7 +47,13 @@ gundam =
     , { id = "Z", title = "Zeta Gundam", imagePath = "covers/85.jpg", anilistId = Just 85 }
     , { id = "ZZ", title = "ZZ", imagePath = "covers/86.jpg", anilistId = Just 86 }
     , { id = "CCA", title = "Char's Counterattack", imagePath = "covers/87.jpg", anilistId = Just 87 }
-    , { id = "earlySD", title = "early SD gundam shorts (Mk-I–Mk-V/Counterattack/Gaiden)", imagePath = "covers/2302.jpg", anilistId = Just 2302 }
+    , { id = "SDMK1", title = "SD Gundam Mk. I", imagePath = "covers/2302.jpg", anilistId = Just 2302 }
+    , { id = "SDMK2", title = "SD Gundam Mk. II", imagePath = "covers/2303.jpg", anilistId = Just 2303 }
+    , { id = "SDMK3", title = "SD Gundam Mk. III", imagePath = "covers/2305.jpg", anilistId = Just 2305 }
+    , { id = "SDMK4", title = "SD Gundam Mk. IV", imagePath = "covers/2304.jpg", anilistId = Just 2304 }
+    , { id = "SDMK5", title = "SD Gundam Mk. V", imagePath = "covers/6792.jpg", anilistId = Just 6792 }
+    , { id = "SDCounterattack", title = "SD Gundam's Counterattack", imagePath = "covers/2306.jpg", anilistId = Just 2306 }
+    , { id = "SDGaiden", title = "SD Gundam Gaiden", imagePath = "covers/1939.jpg", anilistId = Just 1939 }
     , { id = "0080", title = "0080 War in the Pocket", imagePath = "covers/82.jpg", anilistId = Just 82 }
     , { id = "F91", title = "F91", imagePath = "covers/88.jpg", anilistId = Just 88 }
     , { id = "0083", title = "0083 Stardust Memory", imagePath = "covers/84.jpg", anilistId = Just 84 }
