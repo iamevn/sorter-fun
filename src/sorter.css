@@ -119,8 +119,39 @@ svg {
       margin-left: -0.125em;
     }
 
+
     & > label {
-      margin-left: 1em;
-      width: calc(var(--pill-width) - 1em);
+      /* inset labels under a group and draw tree lines (thanks to https://entropicthoughts.com/draw-a-tree-structure-with-only-css#rf2 ) */
+      --nested-margin: 1em;
+      --nested-guide-width: 1px;
+      --nested-guide-style: var(--nested-guide-width) dashed grey;
+      --nested-guide-lift: 0.3lh;
+      --nested-guide-vert-pos: 50%;
+
+      margin-left: var(--nested-margin);
+      width: calc(var(--pill-width) - var(--nested-margin));
+      position: relative;
+
+      &::before,&::after {
+        content: "";
+        position: absolute;
+        left: calc(-1 * var(--nested-margin) - var(--nested-guide-width));
+      }
+      &::before {
+        border-top: var(--nested-guide-style);
+        top: var(--nested-guide-vert-pos);
+        width: var(--nested-margin);
+        height: 0;
+      }
+      &::after {
+        border-left: var(--nested-guide-style);
+        height: 100%;
+        width: 0;
+        top: calc(-1 * var(--nested-guide-lift));
+      }
+      &:last-child::after {
+        height: calc(var(--nested-guide-lift) + var(--nested-guide-vert-pos));
+      }
     }
+  }
 }
