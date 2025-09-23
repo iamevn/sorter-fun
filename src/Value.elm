@@ -1,4 +1,4 @@
-module Value exposing (ChosenValues, VID, Value(..), getAnilistId, getId, getImagePath, getTitle, getValues, groups, groupsByShow, gundam, toString, view)
+module Value exposing (ChosenValues, VID, Value(..), allShows, getAnilistId, getId, getImagePath, getTitle, getValues, groups, groupsByShow, gundam, toString, view)
 
 import Dict exposing (Dict)
 import Html exposing (Html, div, img, text)
@@ -166,13 +166,11 @@ gundam =
             , Show { id = "Z:ANT3", title = "Mobile Suit Zeta Gundam: A New Translation III - Love Is the Pulse of the Stars", imagePath = "covers/1969.jpg", anilistId = Just 1969 }
             ]
         }
+    , Show { id = "M2R", title = "Gundam: Mission To The Rise", imagePath = "covers/4540.jpg", anilistId = Just 4540 }
+    , Show { id = "EVOLVE", title = "Gundam EVOLVE", imagePath = "covers/3288.jpg", anilistId = Just 3288 }
+    , Show { id = "Ring", title = "Ring of Gundam", imagePath = "covers/7060.jpg", anilistId = Just 7060 }
     , Show { id = "SEED:Astray", title = "Mobile Suit Gundam Seed MSV Astray", imagePath = "covers/864.jpg", anilistId = Just 864 }
     , Show { id = "SEED:Stargazer", title = "Mobile Suit Gundam Seed C.E.73: Stargazer", imagePath = "covers/1215.jpg", anilistId = Just 1215 }
-    , Show { id = "M2R", title = "Gundam: Mission To The Rise", imagePath = "covers/4540.jpg", anilistId = Just 4540 }
-    , Show { id = "Ring", title = "Ring of Gundam", imagePath = "covers/7060.jpg", anilistId = Just 7060 }
-    , Show { id = "EVOLVE", title = "Gundam EVOLVE", imagePath = "covers/3288.jpg", anilistId = Just 3288 }
-    , Show { id = "WfM", title = "Witch from Mercury", imagePath = "covers/139274.jpg", anilistId = Just 139274 }
-    , Show { id = "GQX", title = "GQuuuuuuX", imagePath = "covers/185213.jpg", anilistId = Just 185213 }
     , Show { id = "00", title = "Mobile Suit Gundam 00", imagePath = "covers/2581.jpg", anilistId = Just 2581 }
     , Show { id = "00:WT", title = "Mobile Suit Gundam 00 The Movie: A Wakening of the Trailblazer", imagePath = "covers/6288.jpg", anilistId = Just 6288 }
     , Show { id = "UC", title = "Mobile Suit Gundam Unicorn", imagePath = "covers/6336.jpg", anilistId = Just 6336 }
@@ -214,10 +212,12 @@ gundam =
     , Show { id = "Hathaway", title = "Mobile Suit Gundam Hathaway", imagePath = "covers/105595.jpg", anilistId = Just 105595 }
     , Show { id = "BreakerBattlogue", title = "Gundam Breaker Battlogue", imagePath = "covers/135645.jpg", anilistId = Just 135645 }
     , Show { id = "Doan", title = "Mobile Suit Gundam Cucuruz Doan's Island", imagePath = "covers/139273.jpg", anilistId = Just 139273 }
+    , Show { id = "WfM", title = "Witch from Mercury", imagePath = "covers/139274.jpg", anilistId = Just 139274 }
     , Show { id = "Meta", title = "Gundam Build Metaverse", imagePath = "covers/163204.jpg", anilistId = Just 163204 }
     , Show { id = "SFreedom", title = "Mobile Suit Gundam SEED Freedom", imagePath = "covers/134761.jpg", anilistId = Just 134761 }
     , Show { id = "SilverPhantom", title = "Mobile Suit Gundam: Silver Phantom", imagePath = "covers/silverphantom.jpg", anilistId = Nothing }
     , Show { id = "RfV", title = "Mobile Suit Gundam: Requiem for Vengeance", imagePath = "covers/166703.jpg", anilistId = Just 166703 }
+    , Show { id = "GQX", title = "GQuuuuuuX", imagePath = "covers/185213.jpg", anilistId = Just 185213 }
 
     -- , Show { id = "IBO:UH", title = "Mobile Suit Gundam: Iron-Blooded Orphans Urdr Hunt -Path of the Little Challenger-", imagePath = "covers/114842.jpg", anilistId = Just 114842 }
     ]
@@ -288,7 +288,22 @@ getValue id =
             Just v
 
 
-eWatched =
+getShowIds : Value -> List VID
+getShowIds value =
+    case value of
+        Show { id } ->
+            [ id ]
+
+        Group { contains } ->
+            List.concatMap getShowIds contains
+
+
+allShows =
+    Set.fromList <|
+        List.concatMap getShowIds gundam
+
+
+evanWatched =
     Set.fromList
         [ "0079"
         , "Z"
@@ -314,11 +329,11 @@ eWatched =
         , "IGLOO2"
         , "Neo0087"
         , "Z:ANT"
+        , "M2R"
+        , "EVOLVE"
+        , "Ring"
         , "SEED:Astray"
         , "SEED:Stargazer"
-        , "M2R"
-        , "Ring"
-        , "EVOLVE"
         , "WfM"
         , "GQX"
         ]
@@ -327,10 +342,11 @@ eWatched =
 ggpWatched =
     Set.fromList
         [ "0079"
+        , "0079Movies" -- , "MSG1" , "MSG2" , "MSG3"
         , "Z"
         , "ZZ"
         , "CCA"
-        , "earlySD"
+        , "earlySD" -- , "SDMK1" , "SDMK2" , "SDMK3" , "SDMK4" , "SDMK5" , "SDCounterattack" , "SDGaiden" , "SDMatsuri" , "SDScramble" , "SDHyakka"
         , "0080"
         , "F91"
         , "0083"
@@ -349,10 +365,18 @@ ggpWatched =
         , "IGLOO"
         , "IGLOO2"
         , "Neo0087"
-        , "Z:ANT"
+        , "Z:ANT" -- , "Z:ANT1" , "Z:ANT2" , "Z:ANT3"
+        , "M2R"
+        , "EVOLVE"
+        , "Ring"
         , "SEED:Astray"
         , "SEED:Stargazer"
-        , "M2R"
-        , "Ring"
-        , "EVOLVE"
+        , "00"
+        , "00:WT"
+        , "UC"
+        , "GBBG"
+        , "SDBBW"
+        , "AGE"
+        , "AGE:ME"
+        , "BF"
         ]

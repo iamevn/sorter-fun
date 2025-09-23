@@ -228,7 +228,7 @@ stylesheet path =
 
 initSetup : SetupState
 initSetup =
-    { entries = Value.gundam, chosen = Set.empty }
+    { entries = Value.gundam, chosen = Value.allShows }
 
 
 viewSetup : SetupState -> List (Html Msg)
