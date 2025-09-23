@@ -20,7 +20,7 @@ import Random.List exposing (shuffle)
 import Set exposing (Set)
 import Tournament exposing (Tournament)
 import Url exposing (Url)
-import Value exposing (Value, ValueCmp)
+import Value exposing (GID, Value)
 
 
 main : Program () Model Msg
@@ -36,7 +36,7 @@ main =
 
 
 type alias ChosenValues =
-    Set ValueCmp
+    Set GID
 
 
 type alias SetupState =
@@ -126,7 +126,7 @@ update msg model =
                 Setup state ->
                     let
                         vs =
-                            List.map Value.toCmp values
+                            List.map .id values
                                 |> Set.fromList
 
                         setFn =
@@ -224,7 +224,7 @@ viewSetup state =
             label []
                 [ input
                     [ type_ "checkbox"
-                    , checked <| Set.member (Value.toCmp value) state.chosen
+                    , checked <| Set.member value.id state.chosen
                     , onCheck (SetupSelect [ value ])
                     ]
                     []
