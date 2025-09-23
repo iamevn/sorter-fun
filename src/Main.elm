@@ -126,7 +126,7 @@ update msg model =
                 Setup state ->
                     let
                         vs =
-                            List.map .id values
+                            List.map Value.getId values
                                 |> Set.fromList
 
                         setFn =
@@ -224,7 +224,7 @@ viewSetup state =
             label []
                 [ input
                     [ type_ "checkbox"
-                    , checked <| Set.member value.id state.chosen
+                    , checked <| Set.member (Value.getId value) state.chosen
                     , onCheck (SetupSelect [ value ])
                     ]
                     []

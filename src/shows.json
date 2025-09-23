@@ -42,16 +42,16 @@
     "GQX": {"title": "GQuuuuuuX", "cover": "covers/185213.jpg", "anilistId": 185213}
   },
   "groups": {
-    "0079Movies": {"title": "Mobile Suit Gundam movie trilogy", "cover": "covers/1090.jpg", "anilistId": 1090, "covers": ["MSG1", "MSG2", "MSG3"]},
-    "earlySD": {"title": "early SD gundam shorts (Mk-I–Mk-V/Counterattack/Gaiden)", "cover": "covers/2302.jpg", "anilistId": 2302, "covers": ["SDMK1", "SDMK2", "SDMK3", "SDMK4", "SDMK5", "SDCounterattack", "SDGaiden"]},
-    "GRecoMovies": {"title": "Gundam Reconguista in G Movies", "cover": "covers/105596.jpg", "anilistId": 105596, "covers": ["GReco1", "GReco2", "GReco3", "GReco4", "GReco5"]}
+    "0079Movies": {"title": "Mobile Suit Gundam movie trilogy", "cover": "covers/1090.jpg", "anilistId": 1090, "contains": ["MSG1", "MSG2", "MSG3"]},
+    "earlySD": {"title": "early SD gundam shorts (Mk-I–Mk-V/Counterattack/Gaiden)", "cover": "covers/2302.jpg", "anilistId": 2302, "contains": ["SDMK1", "SDMK2", "SDMK3", "SDMK4", "SDMK5", "SDCounterattack", "SDGaiden"]},
+    "GRecoMovies": {"title": "Gundam Reconguista in G Movies", "cover": "covers/105596.jpg", "anilistId": 105596, "contains": ["GReco1", "GReco2", "GReco3", "GReco4", "GReco5"]}
   },
   "future": {
+    "00": {"title": "Mobile Suit Gundam 00", "cover": "covers/2581.jpg", "anilistId": 2581},
+    "00:WT": {"title": "Mobile Suit Gundam 00 The Movie: A Wakening of the Trailblazer", "cover": "covers/6288.jpg", "anilistId": 6288},
     "SDMatsuri": {"title": "SD Gundam Matsuri", "cover": "covers/9098.jpg", "anilistId": 9098},
     "SDScramble": {"title": "SD Gundam Musha Knight Command Emergency Sortie", "cover": "covers/9087.jpg", "anilistId": 9087},
     "SDHyakka": {"title": "SD Gundam Hyakka (Many Things SD Gundam)", "cover": "covers/hyakka.jpg", "anilistId": null},
-    "00": {"title": "Mobile Suit Gundam 00", "cover": "covers/2581.jpg", "anilistId": 2581},
-    "00:WT": {"title": "Mobile Suit Gundam 00 The Movie: A Wakening of the Trailblazer", "cover": "covers/6288.jpg", "anilistId": 6288},
     "UC": {"title": "Mobile Suit Gundam Unicorn", "cover": "covers/6336.jpg", "anilistId": 6336},
     "GBBG": {"title": "Mobile Suit Gunpla Builders Beginning G", "cover": "covers/9040.jpg", "anilistId": 9040},
     "SDBBW": {"title": "SD Gundam Sangokuden Brave Battle Warriors", "cover": "covers/8287.jpg", "anilistId": 8287},
