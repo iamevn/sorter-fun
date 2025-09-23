@@ -105,8 +105,6 @@ view value =
 gundam : List Value
 gundam =
     [ Show { id = "0079", title = "Mobile Suit Gundam 0079", imagePath = "covers/80.jpg", anilistId = Just 80 }
-
-    -- , Group { id = "0079Movies", title = "Mobile Suit Gundam movie trilogy", imagePath = "covers/1090.jpg", anilistId = Just 1090, contains = [ "MSG1", "MSG2", "MSG3" ] }
     , Group
         { id = "0079Movies"
         , title = "Mobile Suit Gundam movie trilogy"
@@ -121,8 +119,6 @@ gundam =
     , Show { id = "Z", title = "Zeta Gundam", imagePath = "covers/85.jpg", anilistId = Just 85 }
     , Show { id = "ZZ", title = "ZZ", imagePath = "covers/86.jpg", anilistId = Just 86 }
     , Show { id = "CCA", title = "Char's Counterattack", imagePath = "covers/87.jpg", anilistId = Just 87 }
-
-    -- , Group { id = "earlySD", title = "early SD Gundam shorts", imagePath = "covers/2302.jpg", anilistId = Just 2302, contains = [ "SDMK1", "SDMK2", "SDMK3", "SDMK4", "SDMK5", "SDCounterattack", "SDGaiden" ] }
     , Group
         { id = "earlySD"
         , title = "early SD Gundam shorts"
@@ -136,6 +132,9 @@ gundam =
             , Show { id = "SDMK5", title = "SD Gundam Mk. V", imagePath = "covers/6792.jpg", anilistId = Just 6792 }
             , Show { id = "SDCounterattack", title = "SD Gundam's Counterattack", imagePath = "covers/2306.jpg", anilistId = Just 2306 }
             , Show { id = "SDGaiden", title = "SD Gundam Gaiden", imagePath = "covers/1939.jpg", anilistId = Just 1939 }
+            , Show { id = "SDMatsuri", title = "SD Gundam Matsuri", imagePath = "covers/9098.jpg", anilistId = Just 9098 }
+            , Show { id = "SDScramble", title = "SD Gundam Musha Knight Command Emergency Sortie", imagePath = "covers/9087.jpg", anilistId = Just 9087 }
+            , Show { id = "SDHyakka", title = "SD Gundam Hyakka (Many Things SD Gundam)", imagePath = "covers/hyakka.jpg", anilistId = Nothing }
             ]
         }
     , Show { id = "0080", title = "0080 War in the Pocket", imagePath = "covers/82.jpg", anilistId = Just 82 }
@@ -156,7 +155,17 @@ gundam =
     , Show { id = "IGLOO", title = "MS IGLOO", imagePath = "covers/1917.jpg", anilistId = Just 1917 }
     , Show { id = "IGLOO2", title = "MS IGLOO 2", imagePath = "covers/4232.jpg", anilistId = Just 4232 }
     , Show { id = "Neo0087", title = "Gundam Neo Experience 0087: Green Divers", imagePath = "covers/8839.jpg", anilistId = Just 8839 }
-    , Show { id = "Z:ANT", title = "Mobile Suit Zeta Gundam: A New Translation", imagePath = "covers/1967.jpg", anilistId = Just 1967 }
+    , Group
+        { id = "Z:ANT"
+        , title = "Mobile Suit Zeta Gundam: A New Translation"
+        , imagePath = "covers/1967.jpg"
+        , anilistId = Just 1967
+        , contains =
+            [ Show { id = "Z:ANT1", title = "Mobile Suit Zeta Gundam: A New Translation I - Heir to the Stars", imagePath = "covers/1967.jpg", anilistId = Just 1967 }
+            , Show { id = "Z:ANT2", title = "Mobile Suit Zeta Gundam: A New Translation II - Lovers", imagePath = "covers/1968.jpg", anilistId = Just 1968 }
+            , Show { id = "Z:ANT3", title = "Mobile Suit Zeta Gundam: A New Translation III - Love Is the Pulse of the Stars", imagePath = "covers/1969.jpg", anilistId = Just 1969 }
+            ]
+        }
     , Show { id = "SEED:Astray", title = "Mobile Suit Gundam Seed MSV Astray", imagePath = "covers/864.jpg", anilistId = Just 864 }
     , Show { id = "SEED:Stargazer", title = "Mobile Suit Gundam Seed C.E.73: Stargazer", imagePath = "covers/1215.jpg", anilistId = Just 1215 }
     , Show { id = "M2R", title = "Gundam: Mission To The Rise", imagePath = "covers/4540.jpg", anilistId = Just 4540 }
@@ -166,54 +175,50 @@ gundam =
     , Show { id = "GQX", title = "GQuuuuuuX", imagePath = "covers/185213.jpg", anilistId = Just 185213 }
     , Show { id = "00", title = "Mobile Suit Gundam 00", imagePath = "covers/2581.jpg", anilistId = Just 2581 }
     , Show { id = "00:WT", title = "Mobile Suit Gundam 00 The Movie: A Wakening of the Trailblazer", imagePath = "covers/6288.jpg", anilistId = Just 6288 }
+    , Show { id = "UC", title = "Mobile Suit Gundam Unicorn", imagePath = "covers/6336.jpg", anilistId = Just 6336 }
+    , Show { id = "GBBG", title = "Mobile Suit Gunpla Builders Beginning G", imagePath = "covers/9040.jpg", anilistId = Just 9040 }
+    , Show { id = "SDBBW", title = "SD Gundam Sangokuden Brave Battle Warriors", imagePath = "covers/8287.jpg", anilistId = Just 8287 }
+    , Show { id = "AGE", title = "Mobile Suit Gundam AGE", imagePath = "covers/10808.jpg", anilistId = Just 10808 }
+    , Show { id = "AGE:ME", title = "Mobile Suit Gundam AGE: Memory of Eden", imagePath = "covers/17655.jpg", anilistId = Just 17655 }
+    , Show { id = "BF", title = "Gundam Build Fighters", imagePath = "covers/19319.jpg", anilistId = Just 19319 }
+    , Show { id = "Gundamsan", title = "Mobile Suit Gundam-san", imagePath = "covers/20756.jpg", anilistId = Just 20756 }
+    , Show { id = "GReco", title = "Gundam Reconguista in G", imagePath = "covers/20658.jpg", anilistId = Just 20658 }
+    , Show { id = "BFTry", title = "Gundam Build Fighters Try", imagePath = "covers/20739.jpg", anilistId = Just 20739 }
+    , Show { id = "Origin", title = "Mobile Suit Gundam: The Origin", imagePath = "covers/10937.jpg", anilistId = Just 10937 }
+    , Show { id = "IBO", title = "Mobile Suit Gundam: Iron-Blooded Orphans", imagePath = "covers/21268.jpg", anilistId = Just 21268 }
+    , Show { id = "Thunderbolt", title = "Mobile Suit Gundam: Thunderbolt", imagePath = "covers/21458.jpg", anilistId = Just 21458 }
+    , Show { id = "BFTryIW", title = "Gundam Build Fighters Try Island Wars", imagePath = "covers/21814.jpg", anilistId = Just 21814 }
+    , Show { id = "TwilightAXIS", title = "Mobile Suit Gundam: Twilight AXIS", imagePath = "covers/98504.jpg", anilistId = Just 98504 }
+    , Show { id = "BF:Battlogue", title = "Gundam Build Fighters Battlogue", imagePath = "covers/99731.jpg", anilistId = Just 99731 }
+    , Show { id = "BF:GMCounterattack", title = "Gundam Build Fighters GM'S Counterattack", imagePath = "covers/99732.jpg", anilistId = Just 99732 }
+    , Show { id = "BD", title = "Gundam Build Divers", imagePath = "covers/101036.jpg", anilistId = Just 101036 }
+    , Show { id = "Narrative", title = "Mobile Suit Gundam Narrative", imagePath = "covers/101554.jpg", anilistId = Just 101554 }
+    , Show { id = "SDWSangoku", title = "SD Gundam World Sangoku Soketsuden", imagePath = "covers/108041.jpg", anilistId = Just 108041 }
+    , Show { id = "LightLife", title = "Mobile Suit Gundam Light of Life Chronicle U.C.", imagePath = "covers/113138.jpg", anilistId = Just 113138 }
+    , Show { id = "BDRR", title = "Gundam Build Divers Re:Rise", imagePath = "covers/110786.jpg", anilistId = Just 110786 }
+    , Group
+        { id = "GRecoMovies"
+        , title = "Gundam Reconguista in G Movies"
+        , imagePath = "covers/105596.jpg"
+        , anilistId = Just 105596
+        , contains =
+            [ Show { id = "GReco1", title = "Reconguista in G the Movie I Go! Core Fighter", imagePath = "covers/105596.jpg", anilistId = Just 105596 }
+            , Show { id = "GReco2", title = "Reconguista in G the Movie II Bellri’s Fierce Charge", imagePath = "covers/114334.jpg", anilistId = Just 114334 }
+            , Show { id = "GReco3", title = "Reconguista in G the Movie III Legacy from Space", imagePath = "covers/132324.jpg", anilistId = Just 132324 }
+            , Show { id = "GReco4", title = "Reconguista in G the Movie IV Shouting Love Into a Fierce Fight", imagePath = "covers/146631.jpg", anilistId = Just 146631 }
+            , Show { id = "GReco5", title = "Reconguista in G the Movie V Crossing the Line Between Life and Death ", imagePath = "covers/146632.jpg", anilistId = Just 146632 }
+            ]
+        }
+    , Show { id = "BuildReal", title = "Gundam Build Real", imagePath = "covers/buildreal.jpg", anilistId = Nothing }
+    , Show { id = "SDWHeroes", title = "SD Gundam World Heroes", imagePath = "covers/126664.jpg", anilistId = Just 126664 }
+    , Show { id = "Hathaway", title = "Mobile Suit Gundam Hathaway", imagePath = "covers/105595.jpg", anilistId = Just 105595 }
+    , Show { id = "BreakerBattlogue", title = "Gundam Breaker Battlogue", imagePath = "covers/135645.jpg", anilistId = Just 135645 }
+    , Show { id = "Doan", title = "Mobile Suit Gundam Cucuruz Doan's Island", imagePath = "covers/139273.jpg", anilistId = Just 139273 }
+    , Show { id = "Meta", title = "Gundam Build Metaverse", imagePath = "covers/163204.jpg", anilistId = Just 163204 }
+    , Show { id = "SFreedom", title = "Mobile Suit Gundam SEED Freedom", imagePath = "covers/134761.jpg", anilistId = Just 134761 }
+    , Show { id = "SilverPhantom", title = "Mobile Suit Gundam: Silver Phantom", imagePath = "covers/silverphantom.jpg", anilistId = Nothing }
+    , Show { id = "RfV", title = "Mobile Suit Gundam: Requiem for Vengeance", imagePath = "covers/166703.jpg", anilistId = Just 166703 }
 
-    -- , Show { id = "SDMatsuri", title = "SD Gundam Matsuri", imagePath = "covers/9098.jpg", anilistId = Just 9098 }
-    -- , Show { id = "SDScramble", title = "SD Gundam Musha Knight Command Emergency Sortie", imagePath = "covers/9087.jpg", anilistId = Just 9087 }
-    -- , Show { id = "SDHyakka", title = "SD Gundam Hyakka (Many Things SD Gundam)", imagePath = "covers/hyakka.jpg", anilistId = Nothing }
-    -- , Show { id = "UC", title = "Mobile Suit Gundam Unicorn", imagePath = "covers/6336.jpg", anilistId = Just 6336 }
-    -- , Show { id = "GBBG", title = "Mobile Suit Gunpla Builders Beginning G", imagePath = "covers/9040.jpg", anilistId = Just 9040 }
-    -- , Show { id = "SDBBW", title = "SD Gundam Sangokuden Brave Battle Warriors", imagePath = "covers/8287.jpg", anilistId = Just 8287 }
-    -- , Show { id = "AGE", title = "Mobile Suit Gundam AGE", imagePath = "covers/10808.jpg", anilistId = Just 10808 }
-    -- , Show { id = "AGE:ME", title = "Mobile Suit Gundam AGE: Memory of Eden", imagePath = "covers/17655.jpg", anilistId = Just 17655 }
-    -- , Show { id = "BF", title = "Gundam Build Fighters", imagePath = "covers/19319.jpg", anilistId = Just 19319 }
-    -- , Show { id = "Gundamsan", title = "Mobile Suit Gundam-san", imagePath = "covers/20756.jpg", anilistId = Just 20756 }
-    -- , Show { id = "GReco", title = "Gundam Reconguista in G", imagePath = "covers/20658.jpg", anilistId = Just 20658 }
-    -- , Show { id = "BFTry", title = "Gundam Build Fighters Try", imagePath = "covers/20739.jpg", anilistId = Just 20739 }
-    -- , Show { id = "Origin", title = "Mobile Suit Gundam: The Origin", imagePath = "covers/10937.jpg", anilistId = Just 10937 }
-    -- , Show { id = "IBO", title = "Mobile Suit Gundam: Iron-Blooded Orphans", imagePath = "covers/21268.jpg", anilistId = Just 21268 }
-    -- , Show { id = "Thunderbolt", title = "Mobile Suit Gundam: Thunderbolt", imagePath = "covers/21458.jpg", anilistId = Just 21458 }
-    -- , Show { id = "BFTryIW", title = "Gundam Build Fighters Try Island Wars", imagePath = "covers/21814.jpg", anilistId = Just 21814 }
-    -- , Show { id = "TwilightAXIS", title = "Mobile Suit Gundam: Twilight AXIS", imagePath = "covers/98504.jpg", anilistId = Just 98504 }
-    -- , Show { id = "BF:Battlogue", title = "Gundam Build Fighters Battlogue", imagePath = "covers/99731.jpg", anilistId = Just 99731 }
-    -- , Show { id = "BF:GMCounterattack", title = "Gundam Build Fighters GM'S Counterattack", imagePath = "covers/99732.jpg", anilistId = Just 99732 }
-    -- , Show { id = "BD", title = "Gundam Build Divers", imagePath = "covers/101036.jpg", anilistId = Just 101036 }
-    -- , Show { id = "Narrative", title = "Mobile Suit Gundam Narrative", imagePath = "covers/101554.jpg", anilistId = Just 101554 }
-    -- , Show { id = "SDWSangoku", title = "SD Gundam World Sangoku Soketsuden", imagePath = "covers/108041.jpg", anilistId = Just 108041 }
-    -- , Show { id = "LightLife", title = "Mobile Suit Gundam Light of Life Chronicle U.C.", imagePath = "covers/113138.jpg", anilistId = Just 113138 }
-    -- , Show { id = "BDRR", title = "Gundam Build Divers Re:Rise", imagePath = "covers/110786.jpg", anilistId = Just 110786 }
-    -- -- , Group { id = "GRecoMovies", title = "Gundam Reconguista in G Movies", imagePath = "covers/105596.jpg", anilistId = Just 105596, contains = [ "GReco1", "GReco2", "GReco3", "GReco4", "GReco5" ] }
-    -- , Group
-    --     { id = "GRecoMovies"
-    --     , title = "Gundam Reconguista in G Movies"
-    --     , imagePath = "covers/105596.jpg"
-    --     , anilistId = Just 105596
-    --     , contains =
-    --         [ Show { id = "GReco1", title = "Reconguista in G the Movie I Go! Core Fighter", imagePath = "covers/105596.jpg", anilistId = Just 105596 }
-    --         , Show { id = "GReco2", title = "Reconguista in G the Movie II Bellri’s Fierce Charge", imagePath = "covers/114334.jpg", anilistId = Just 114334 }
-    --         , Show { id = "GReco3", title = "Reconguista in G the Movie III Legacy from Space", imagePath = "covers/132324.jpg", anilistId = Just 132324 }
-    --         , Show { id = "GReco4", title = "Reconguista in G the Movie IV Shouting Love Into a Fierce Fight", imagePath = "covers/146631.jpg", anilistId = Just 146631 }
-    --         , Show { id = "GReco5", title = "Reconguista in G the Movie V Crossing the Line Between Life and Death ", imagePath = "covers/146632.jpg", anilistId = Just 146632 }
-    --         ]
-    --     }
-    -- , Show { id = "BuildReal", title = "Gundam Build Real", imagePath = "covers/buildreal.jpg", anilistId = Nothing }
-    -- , Show { id = "SDWHeroes", title = "SD Gundam World Heroes", imagePath = "covers/126664.jpg", anilistId = Just 126664 }
-    -- , Show { id = "Hathaway", title = "Mobile Suit Gundam Hathaway", imagePath = "covers/105595.jpg", anilistId = Just 105595 }
-    -- , Show { id = "BreakerBattlogue", title = "Gundam Breaker Battlogue", imagePath = "covers/135645.jpg", anilistId = Just 135645 }
-    -- , Show { id = "Doan", title = "Mobile Suit Gundam Cucuruz Doan's Island", imagePath = "covers/139273.jpg", anilistId = Just 139273 }
-    -- , Show { id = "Meta", title = "Gundam Build Metaverse", imagePath = "covers/163204.jpg", anilistId = Just 163204 }
-    -- , Show { id = "SFreedom", title = "Mobile Suit Gundam SEED Freedom", imagePath = "covers/134761.jpg", anilistId = Just 134761 }
-    -- , Show { id = "SilverPhantom", title = "Mobile Suit Gundam: Silver Phantom", imagePath = "covers/silverphantom.jpg", anilistId = Nothing }
-    -- , Show { id = "RfV", title = "Mobile Suit Gundam: Requiem for Vengeance", imagePath = "covers/166703.jpg", anilistId = Just 166703 }
     -- , Show { id = "IBO:UH", title = "Mobile Suit Gundam: Iron-Blooded Orphans Urdr Hunt -Path of the Little Challenger-", imagePath = "covers/114842.jpg", anilistId = Just 114842 }
     ]
 
