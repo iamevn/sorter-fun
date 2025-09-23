@@ -217,15 +217,6 @@ resetButton =
     button [ onClick Reset ] [ text "Start Over" ]
 
 
-stylesheet : String -> Html Msg
-stylesheet path =
-    node "link"
-        [ href path
-        , rel "stylesheet"
-        ]
-        []
-
-
 initSetup : SetupState
 initSetup =
     { entries = Value.gundam, chosen = Value.allShows }
@@ -372,17 +363,15 @@ view model =
     { title =
         "Gundam Sorter"
     , body =
-        stylesheet "sorter.css"
-            :: (case model of
-                    Setup state ->
-                        viewSetup state
+        case model of
+            Setup state ->
+                viewSetup state
 
-                    Sorting state ->
-                        viewSorting state
+            Sorting state ->
+                viewSorting state
 
-                    Sorted results ->
-                        viewSorted results
-               )
+            Sorted results ->
+                viewSorted results
     }
 
 

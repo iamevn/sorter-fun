@@ -1,2 +1,5 @@
 # dependenceies installed after running elm make
 elm-stuff
+
+# built application
+dist/sorter.js

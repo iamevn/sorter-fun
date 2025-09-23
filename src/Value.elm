@@ -299,8 +299,7 @@ getShowIds value =
 
 
 allShows =
-    Set.fromList <|
-        List.concatMap getShowIds gundam
+    Set.fromList (List.concatMap getShowIds gundam)
 
 
 evanWatched =
