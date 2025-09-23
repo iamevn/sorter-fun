@@ -107,4 +107,20 @@ svg {
     width: var(--pill-width);
     padding: 0.25em;
   }
+
+  fieldset {
+    display: inline-flex;
+    flex-direction: column;
+    margin-left: 0;
+    padding: 0;
+    border: 0;
+
+    legend {
+      margin-left: -0.125em;
+    }
+
+    & > label {
+      margin-left: 1em;
+      width: calc(var(--pill-width) - 1em);
+    }
 }
