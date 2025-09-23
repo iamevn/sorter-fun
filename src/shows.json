@@ -1,9 +1,9 @@
 {
   "shows": {
     "0079": {"title": "Mobile Suit Gundam 0079", "cover": "covers/80.jpg", "anilistId": 80},
-    "MSG1": {"title": "Mobile Suit Gundam I", "cover": "covers/1090", "anilistId": 1090},
-    "MSG2": {"title": "Mobile Suit Gundam II: Soldiers of Sorrow", "cover": "covers/1091", "anilistId": 1091},
-    "MSG3": {"title": "Mobile Suit Gundam III: Encounters in Space", "cover": "covers/1092", "anilistId": 1092},
+    "MSG1": {"title": "Mobile Suit Gundam I", "cover": "covers/1090.jpg", "anilistId": 1090},
+    "MSG2": {"title": "Mobile Suit Gundam II: Soldiers of Sorrow", "cover": "covers/1091.jpg", "anilistId": 1091},
+    "MSG3": {"title": "Mobile Suit Gundam III: Encounters in Space", "cover": "covers/1092.jpg", "anilistId": 1092},
     "Z": {"title": "Zeta Gundam", "cover": "covers/85.jpg", "anilistId": 85},
     "ZZ": {"title": "ZZ", "cover": "covers/86.jpg", "anilistId": 86},
     "CCA": {"title": "Char's Counterattack", "cover": "covers/87.jpg", "anilistId": 87},

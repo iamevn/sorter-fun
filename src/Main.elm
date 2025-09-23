@@ -12,6 +12,7 @@ import Browser exposing (Document, UrlRequest)
 import Browser.Navigation exposing (Key)
 import Choice exposing (Choice)
 import Comparison exposing (Comparison)
+import Dict
 import Html exposing (Html, br, button, details, div, fieldset, h1, input, label, legend, li, node, ol, span, summary, text)
 import Html.Attributes exposing (checked, class, href, id, rel, type_)
 import Html.Events exposing (onCheck, onClick)
@@ -20,7 +21,7 @@ import Random.List exposing (shuffle)
 import Set exposing (Set)
 import Tournament exposing (Tournament)
 import Url exposing (Url)
-import Value exposing (GID, Value)
+import Value exposing (ChosenValues, VID, Value(..))
 
 
 main : Program () Model Msg
@@ -33,10 +34,6 @@ main =
         , onUrlRequest = onUrlRequest
         , onUrlChange = onUrlChange
         }
-
-
-type alias ChosenValues =
-    Set GID
 
 
 type alias SetupState =
@@ -72,7 +69,7 @@ type Model
 
 type Msg
     = NewList (List Value)
-    | SetupSelect (List Value) Bool
+    | SetupSelect Value Bool
     | FinishSetup (List Value)
     | Pick Choice
     | Noop
@@ -115,31 +112,54 @@ getChosenValues model =
             chosen
 
 
+removeAll : List comparable -> Set comparable -> Set comparable
+removeAll toRemove set =
+    case toRemove of
+        [] ->
+            set
+
+        v :: vs ->
+            removeAll vs (Set.remove v set)
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Noop ->
             ( model, Cmd.none )
 
-        SetupSelect values checked ->
+        SetupSelect value checked ->
             case model of
                 Setup state ->
                     let
-                        vs =
-                            List.map Value.getId values
-                                |> Set.fromList
-
-                        setFn =
+                        newChosen =
                             if checked then
-                                Set.union
+                                case value of
+                                    Show { id } ->
+                                        let
+                                            -- also uncheck parent group if there is one
+                                            withoutParent =
+                                                case Dict.get id Value.groupsByShow of
+                                                    Nothing ->
+                                                        state.chosen
+
+                                                    Just gid ->
+                                                        Set.remove gid state.chosen
+                                        in
+                                        Set.insert id withoutParent
+
+                                    Group { id, contains } ->
+                                        let
+                                            -- also uncheck group contents
+                                            withoutChildren =
+                                                removeAll (List.map Value.getId contains) state.chosen
+                                        in
+                                        Set.insert id withoutChildren
 
                             else
-                                Set.diff
+                                Set.remove (Value.getId value) state.chosen
                     in
-                    ( Setup
-                        { state
-                            | chosen = setFn state.chosen vs
-                        }
+                    ( Setup { state | chosen = newChosen }
                     , Cmd.none
                     )
 
@@ -224,23 +244,33 @@ viewSetup state =
             label []
                 [ input
                     [ type_ "checkbox"
-                    , checked <| Set.member (Value.getId value) state.chosen
-                    , onCheck (SetupSelect [ value ])
+                    , checked (Set.member (Value.getId value) state.chosen)
+                    , onCheck (SetupSelect value)
                     ]
                     []
-                , text <| Value.toString value
+                , text (Value.getTitle value)
                 ]
 
+        makePicker : Value -> Html Msg
+        makePicker value =
+            case value of
+                Value.Show _ ->
+                    makeCheckbox value
+
+                Value.Group g ->
+                    let
+                        groupCheckbox =
+                            legend [] [ makeCheckbox value ]
+
+                        childCheckboxes =
+                            List.map makeCheckbox g.contains
+                    in
+                    fieldset [] (groupCheckbox :: childCheckboxes)
+
         checkboxes =
-            List.map makeCheckbox state.entries
+            List.map makePicker state.entries
     in
     [ fieldset [ id "setup-root" ] (header :: checkboxes)
-    , button
-        [ onClick (SetupSelect state.entries True) ]
-        [ text "Select all" ]
-    , button
-        [ onClick (SetupSelect state.entries False) ]
-        [ text "Select none" ]
     , button
         [ onClick (FinishSetup (Value.getValues state.chosen)) ]
         [ text "Start Sorting" ]

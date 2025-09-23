@@ -1,4 +1,4 @@
-module Value exposing (GID, Value, getAnilistId, getId, getImagePath, getTitle, getValues, gundam, toString, view)
+module Value exposing (ChosenValues, VID, Value(..), getAnilistId, getId, getImagePath, getTitle, getValues, groups, groupsByShow, gundam, toString, view)
 
 import Dict exposing (Dict)
 import Html exposing (Html, div, img, text)
@@ -6,35 +6,45 @@ import Html.Attributes exposing (class, src)
 import Set exposing (Set)
 
 
-type alias GID =
+type alias VID =
     String
 
 
-type Value
-    = Show
-        { id : GID
-        , title : String
-        , imagePath : String
-        , anilistId : Maybe Int
-        }
-    | Group
-        { id : GID
-        , title : String
-        , imagePath : String
-        , anilistId : Maybe Int
-        , contains : List GID
-        }
+type alias ChosenValues =
+    Set VID
 
 
-type alias Value_ =
-    { id : GID
+type alias ShowMeta =
+    { id : VID
     , title : String
     , imagePath : String
     , anilistId : Maybe Int
     }
 
 
-getId : Value -> GID
+type alias GroupMeta =
+    { id : VID
+    , title : String
+    , imagePath : String
+    , anilistId : Maybe Int
+    , contains : List Value
+    }
+
+
+type Value
+    = Show ShowMeta
+    | Group GroupMeta
+
+
+type alias Value_ =
+    { id : VID
+    , title : String
+    , imagePath : String
+    , anilistId : Maybe Int
+    }
+
+
+getId : Value -> VID
 getId value =
     case value of
         Show { id } ->
@@ -72,7 +82,7 @@ getAnilistId value =
             anilistId
 
 
-getValues : Set GID -> List Value
+getValues : Set VID -> List Value
 getValues =
     Set.toList >> List.filterMap getValue
 
@@ -95,21 +105,39 @@ view value =
 gundam : List Value
 gundam =
     [ Show { id = "0079", title = "Mobile Suit Gundam 0079", imagePath = "covers/80.jpg", anilistId = Just 80 }
-    , Group { id = "0079Movies", title = "Mobile Suit Gundam movie trilogy", imagePath = "covers/1090.jpg", anilistId = Just 1090, contains = [ "MSG1", "MSG2", "MSG3" ] }
-    , Show { id = "MSG1", title = "Mobile Suit Gundam I", imagePath = "covers/1090", anilistId = Just 1090 }
-    , Show { id = "MSG2", title = "Mobile Suit Gundam II: Soldiers of Sorrow", imagePath = "covers/1091", anilistId = Just 1091 }
-    , Show { id = "MSG3", title = "Mobile Suit Gundam III: Encounters in Space", imagePath = "covers/1092", anilistId = Just 1092 }
+
+    -- , Group { id = "0079Movies", title = "Mobile Suit Gundam movie trilogy", imagePath = "covers/1090.jpg", anilistId = Just 1090, contains = [ "MSG1", "MSG2", "MSG3" ] }
+    , Group
+        { id = "0079Movies"
+        , title = "Mobile Suit Gundam movie trilogy"
+        , imagePath = "covers/1090.jpg"
+        , anilistId = Just 1090
+        , contains =
+            [ Show { id = "MSG1", title = "Mobile Suit Gundam I", imagePath = "covers/1090.jpg", anilistId = Just 1090 }
+            , Show { id = "MSG2", title = "Mobile Suit Gundam II: Soldiers of Sorrow", imagePath = "covers/1091.jpg", anilistId = Just 1091 }
+            , Show { id = "MSG3", title = "Mobile Suit Gundam III: Encounters in Space", imagePath = "covers/1092.jpg", anilistId = Just 1092 }
+            ]
+        }
     , Show { id = "Z", title = "Zeta Gundam", imagePath = "covers/85.jpg", anilistId = Just 85 }
     , Show { id = "ZZ", title = "ZZ", imagePath = "covers/86.jpg", anilistId = Just 86 }
     , Show { id = "CCA", title = "Char's Counterattack", imagePath = "covers/87.jpg", anilistId = Just 87 }
-    , Group { id = "earlySD", title = "early SD Gundam shorts", imagePath = "covers/2302.jpg", anilistId = Just 2302, contains = [ "SDMK1", "SDMK2", "SDMK3", "SDMK4", "SDMK5", "SDCounterattack", "SDGaiden" ] }
-    , Show { id = "SDMK1", title = "SD Gundam Mk. I", imagePath = "covers/2302.jpg", anilistId = Just 2302 }
-    , Show { id = "SDMK2", title = "SD Gundam Mk. II", imagePath = "covers/2303.jpg", anilistId = Just 2303 }
-    , Show { id = "SDMK3", title = "SD Gundam Mk. III", imagePath = "covers/2305.jpg", anilistId = Just 2305 }
-    , Show { id = "SDMK4", title = "SD Gundam Mk. IV", imagePath = "covers/2304.jpg", anilistId = Just 2304 }
-    , Show { id = "SDMK5", title = "SD Gundam Mk. V", imagePath = "covers/6792.jpg", anilistId = Just 6792 }
-    , Show { id = "SDCounterattack", title = "SD Gundam's Counterattack", imagePath = "covers/2306.jpg", anilistId = Just 2306 }
-    , Show { id = "SDGaiden", title = "SD Gundam Gaiden", imagePath = "covers/1939.jpg", anilistId = Just 1939 }
+
+    -- , Group { id = "earlySD", title = "early SD Gundam shorts", imagePath = "covers/2302.jpg", anilistId = Just 2302, contains = [ "SDMK1", "SDMK2", "SDMK3", "SDMK4", "SDMK5", "SDCounterattack", "SDGaiden" ] }
+    , Group
+        { id = "earlySD"
+        , title = "early SD Gundam shorts"
+        , imagePath = "covers/2302.jpg"
+        , anilistId = Just 2302
+        , contains =
+            [ Show { id = "SDMK1", title = "SD Gundam Mk. I", imagePath = "covers/2302.jpg", anilistId = Just 2302 }
+            , Show { id = "SDMK2", title = "SD Gundam Mk. II", imagePath = "covers/2303.jpg", anilistId = Just 2303 }
+            , Show { id = "SDMK3", title = "SD Gundam Mk. III", imagePath = "covers/2305.jpg", anilistId = Just 2305 }
+            , Show { id = "SDMK4", title = "SD Gundam Mk. IV", imagePath = "covers/2304.jpg", anilistId = Just 2304 }
+            , Show { id = "SDMK5", title = "SD Gundam Mk. V", imagePath = "covers/6792.jpg", anilistId = Just 6792 }
+            , Show { id = "SDCounterattack", title = "SD Gundam's Counterattack", imagePath = "covers/2306.jpg", anilistId = Just 2306 }
+            , Show { id = "SDGaiden", title = "SD Gundam Gaiden", imagePath = "covers/1939.jpg", anilistId = Just 1939 }
+            ]
+        }
     , Show { id = "0080", title = "0080 War in the Pocket", imagePath = "covers/82.jpg", anilistId = Just 82 }
     , Show { id = "F91", title = "F91", imagePath = "covers/88.jpg", anilistId = Just 88 }
     , Show { id = "0083", title = "0083 Stardust Memory", imagePath = "covers/84.jpg", anilistId = Just 84 }
@@ -163,12 +191,20 @@ gundam =
     -- , Show { id = "SDWSangoku", title = "SD Gundam World Sangoku Soketsuden", imagePath = "covers/108041.jpg", anilistId = Just 108041 }
     -- , Show { id = "LightLife", title = "Mobile Suit Gundam Light of Life Chronicle U.C.", imagePath = "covers/113138.jpg", anilistId = Just 113138 }
     -- , Show { id = "BDRR", title = "Gundam Build Divers Re:Rise", imagePath = "covers/110786.jpg", anilistId = Just 110786 }
-    -- , Group { id = "GRecoMovies", title = "Gundam Reconguista in G Movies", imagePath = "covers/105596.jpg", anilistId = Just 105596, contains = [ "GReco1", "GReco2", "GReco3", "GReco4", "GReco5" ] }
-    -- , Show { id = "GReco1", title = "Reconguista in G the Movie I Go! Core Fighter", imagePath = "covers/105596.jpg", anilistId = Just 105596 }
-    -- , Show { id = "GReco2", title = "Reconguista in G the Movie II Bellri’s Fierce Charge", imagePath = "covers/114334.jpg", anilistId = Just 114334 }
-    -- , Show { id = "GReco3", title = "Reconguista in G the Movie III Legacy from Space", imagePath = "covers/132324.jpg", anilistId = Just 132324 }
-    -- , Show { id = "GReco4", title = "Reconguista in G the Movie IV Shouting Love Into a Fierce Fight", imagePath = "covers/146631.jpg", anilistId = Just 146631 }
-    -- , Show { id = "GReco5", title = "Reconguista in G the Movie V Crossing the Line Between Life and Death ", imagePath = "covers/146632.jpg", anilistId = Just 146632 }
+    -- -- , Group { id = "GRecoMovies", title = "Gundam Reconguista in G Movies", imagePath = "covers/105596.jpg", anilistId = Just 105596, contains = [ "GReco1", "GReco2", "GReco3", "GReco4", "GReco5" ] }
+    -- , Group
+    --     { id = "GRecoMovies"
+    --     , title = "Gundam Reconguista in G Movies"
+    --     , imagePath = "covers/105596.jpg"
+    --     , anilistId = Just 105596
+    --     , contains =
+    --         [ Show { id = "GReco1", title = "Reconguista in G the Movie I Go! Core Fighter", imagePath = "covers/105596.jpg", anilistId = Just 105596 }
+    --         , Show { id = "GReco2", title = "Reconguista in G the Movie II Bellri’s Fierce Charge", imagePath = "covers/114334.jpg", anilistId = Just 114334 }
+    --         , Show { id = "GReco3", title = "Reconguista in G the Movie III Legacy from Space", imagePath = "covers/132324.jpg", anilistId = Just 132324 }
+    --         , Show { id = "GReco4", title = "Reconguista in G the Movie IV Shouting Love Into a Fierce Fight", imagePath = "covers/146631.jpg", anilistId = Just 146631 }
+    --         , Show { id = "GReco5", title = "Reconguista in G the Movie V Crossing the Line Between Life and Death ", imagePath = "covers/146632.jpg", anilistId = Just 146632 }
+    --         ]
+    --     }
     -- , Show { id = "BuildReal", title = "Gundam Build Real", imagePath = "covers/buildreal.jpg", anilistId = Nothing }
     -- , Show { id = "SDWHeroes", title = "SD Gundam World Heroes", imagePath = "covers/126664.jpg", anilistId = Just 126664 }
     -- , Show { id = "Hathaway", title = "Mobile Suit Gundam Hathaway", imagePath = "covers/105595.jpg", anilistId = Just 105595 }
@@ -182,7 +218,7 @@ gundam =
     ]
 
 
-gundamDict : Dict GID Value
+gundamDict : Dict VID Value
 gundamDict =
     let
         d =
@@ -196,9 +232,55 @@ gundamDict =
         d
 
 
+groups : Dict VID GroupMeta
+groups =
+    let
+        justGroups : Value -> Maybe GroupMeta
+        justGroups value =
+            case value of
+                Show _ ->
+                    Nothing
+
+                Group g ->
+                    Just g
+    in
+    gundam
+        |> List.filterMap justGroups
+        |> List.map (\g -> ( g.id, g ))
+        |> Dict.fromList
+
+
+groupsByShow : Dict VID VID
+groupsByShow =
+    let
+        f : GroupMeta -> List ( VID, VID )
+        f g =
+            List.map (\v -> ( getId v, g.id )) g.contains
+    in
+    Dict.values groups
+        |> List.concatMap f
+        |> Dict.fromList
+
+
+getValueFromGroup : VID -> GroupMeta -> Maybe Value
+getValueFromGroup id { contains } =
+    List.filter (\value -> getId value == id) contains
+        |> List.head
+
+
 getValue : String -> Maybe Value
 getValue id =
-    Dict.get id gundamDict
+    case Dict.get id gundamDict of
+        Nothing ->
+            case Dict.get id groupsByShow |> Maybe.andThen getValue of
+                Just (Group g) ->
+                    getValueFromGroup id g
+
+                _ ->
+                    Nothing
+
+        Just v ->
+            Just v
 
 
 eWatched =
