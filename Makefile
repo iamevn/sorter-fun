@@ -1,29 +1,25 @@
-DIST := dist
+MAIN := src/Main.elm
+TARGET := dist/sorter.js
 PAGE := gundam-sorter.html
 CSS := sorter.css
-COVERS := $(wildcard $(DIST)/covers/*)
-TARGET := $(DIST)/sorter.js
-MAIN := src/Main.elm
-SRC_FILES := $(wildcard src/*.elm) $(wildcard src/**/*.elm)
+COVERS := $(wildcard dist/covers/*)
 PUBLISHED_TIMESTAMP := .make_last_published
-PUBLISHED_COVERS_TIMESTAMP := $(PUBLISHED_TIMESTAMP)_covers
+PUBLISHED_COVERS_TIMESTAMP := .make_last_published_covers
 
-$(TARGET) : $(SRC_FILES)
+$(TARGET) : $(wildcard src/*.elm) $(wildcard src/**/*.elm)
 	elm make $(MAIN) --output=$@
 
 .PHONY : live
 live : 
-	elm-live $(MAIN) --open --dir=$(DIST) --start-page=$(PAGE) -- --output=$(TARGET)
+	elm-live $(MAIN) --open --dir=dist/ --start-page=$(PAGE) -- --output=$(TARGET)
 
-# neocities' cli tool checks if files changed before republishing
-# but we can save a little time by only trying to publish
-# files that have changed since our last publish.
-# Can track when we last published with a hidden file.
-# This file's contents don't matter.
+# neocities' cli tool checks if files changed before republishing but we can save a little time
+# by only trying to publish files that have changed since our last publish.
+# Can track when we last published with a hidden file (whose contents don't matter).
 .PHONY : publish
 publish : $(PUBLISHED_TIMESTAMP) $(PUBLISHED_COVERS_TIMESTAMP)
 
-$(PUBLISHED_TIMESTAMP) : $(DIST)/$(PAGE) $(DIST)/$(CSS) $(TARGET)
+$(PUBLISHED_TIMESTAMP) : dist/$(PAGE) dist/$(CSS) $(TARGET)
 	neocities upload -d gundam_ranking/ $?
 	@date > $@
 	@printf "%s\\n" $? >> $@
