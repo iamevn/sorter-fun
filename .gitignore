@@ -3,3 +3,7 @@ elm-stuff
 
 # built application
 dist/sorter.js
+
+# make publish cache files
+.make_last_published
+.make_last_published_covers
