@@ -2,7 +2,6 @@
 -- TODO: seed randomness either from url param or something else
 -- TODO: saving sorting state to url fragment
 -- TODO: pick random comparsion when there are multiple candidates
--- TODO: add more shows for picking
 -- TODO: add presets for picking
 
 
